@@ -25,18 +25,16 @@ class Drone:
             self.SOCKET.connect((self.HOST, self.PORT))
             print("Done")
         except socket.error as e:
-            self.SOCKET=None
+            self.SOCKET = None
             print("Failed with error: %s" %(e))
 
-    def reader(self, queue, event):
-        message="none"
-        while not event.is_set():
-            logging.info("reader got message: %s", message)                 #thread reader
-            queue.put(message)
+    
 
-        logging.info("reader received event. Exiting")
+    def reader(self, event):
+        while True:
+            self.Reader.read_frame()
 
-    def writer(self, queue, event):
+    def writer(self, event):
         while not event.is_set() or not queue.empty():
             message = queue.get()
             logging.info(                                                               #writer theesd
@@ -50,11 +48,10 @@ class Drone:
         logging.basicConfig(format=format, level=logging.INFO,
                             datefmt="%H:%M:%S")                                           #main function
 
-        pipeline = queue.Queue(maxsize=10)
         event = threading.Event()
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-            executor.submit(self.reader, pipeline, event)
-            executor.submit(self.writer, pipeline, event)
+            executor.submit(self.reader, event)
+            executor.submit(self.writer, event)
 
             time.sleep(0.1)
             logging.info("Main: about to set event")
