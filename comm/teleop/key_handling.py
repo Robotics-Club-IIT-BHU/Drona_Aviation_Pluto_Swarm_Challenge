@@ -1,3 +1,5 @@
+import time
+
 class Data():
 	def __init__(self):
 		self.rcRoll =1500
@@ -27,7 +29,8 @@ class send_data():
 		self.cmd.rcThrottle =1000
 		self.cmd.rcAUX4 =1500
 		self.cmd.isAutoPilotOn = 0
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
+		time.sleep(1)
 
 	def box_arm(self):
 		self.cmd.rcRoll=1500
@@ -36,15 +39,17 @@ class send_data():
 		self.cmd.rcThrottle =1500
 		self.cmd.rcAUX4 =1500
 		self.cmd.isAutoPilotOn = 0
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
+		time.sleep(0.5)
 
 	def disarm(self):
 		self.cmd.rcThrottle =1300
 		self.cmd.rcAUX4 = 1200
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
+		time.sleep(0.5)
 
 	def indentify_key(self, msg):
-		self.key_value = msg.data
+		self.key_value = msg
 
 		if self.key_value == 70:
 			if(self.cmd.rcAUX4 == 1500):
@@ -78,44 +83,44 @@ class send_data():
 			self.left_yaw()
 		elif self.key_value == 160:
 			self.right_yaw()
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 
 	def forward(self):
 		self.cmd.rcPitch =1600
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def backward(self):
 		self.cmd.rcPitch =1400
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def left(self):
 		self.cmd.rcRoll =1400
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def right(self):
 		self.cmd.rcRoll =1600
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def left_yaw(self):
 		self.cmd.rcYaw = 1200
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def right_yaw(self):
 		self.cmd.rcYaw = 1800
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def reset(self):
 		self.cmd.rcRoll =1500
 		self.cmd.rcThrottle =1500
 		self.cmd.rcPitch =1500
 		self.cmd.rcYaw = 1500
 		self.cmd.commandType = 0
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def increase_height(self):
 		self.cmd.rcThrottle = 1800
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def decrease_height(self):
 		self.cmd.rcThrottle =1300
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def take_off(self):
 		self.disarm()
 		self.box_arm()
 		self.cmd.commandType = 1
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)
 	def land(self):
 		self.cmd.commandType = 2
-		self.drone.process_msg(self.cmd)
+		self.drone.sendCommand(self.cmd)

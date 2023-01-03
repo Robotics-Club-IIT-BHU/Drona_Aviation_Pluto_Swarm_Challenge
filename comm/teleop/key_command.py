@@ -1,5 +1,7 @@
 import sys, select, termios, tty
 from key_handling import send_data
+
+sys.path.insert(0, '../')
 from drone import Drone
 
 msg = """
@@ -76,6 +78,7 @@ if __name__=="__main__":
     control_to_change_value=('u','o',',','z','c') #tuple containing the key that change the value
     drone=Drone("192.168.4.1", 23, 1)
     publish=send_data(drone)
+    print(msg)
     try:
         while True:
           key = getKey()                          # get the key from keyboard
@@ -90,5 +93,6 @@ if __name__=="__main__":
     except Exception as e:
         print(e)
     finally:
-        print(key)
+        print("Keyboard control ended. \n(Press CTRL+C again to close the threads)")
+        # print(key)
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
