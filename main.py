@@ -11,8 +11,9 @@ def main():
 			# port number,
 			# timeout
 			)
-	drone.prepare()
-	drone.armTakeOff()
+	# drone.prepare()
+	drone.arm()
+	drone.take_off()
 
 	trajectory_server = trajectoryServer(r, n) ## Define shape using polygon
 
@@ -21,7 +22,7 @@ def main():
 	height = get_height()
 	coordinates = poseEstimation(img_server.prev, height)
 
-	drone.getControl().start()
+	# drone.getControl().start()
 	sleep_timer = sleepTimer(50) # rate
 	controllers = [
 			altitude_cnt(),
@@ -38,6 +39,7 @@ def main():
 		command = drone.command_preprocess(command)
 		drone.sendCommand(command)
 		sleep_timer.sleep()
+	
 	finally:
 		final_command = []
 		for cont in controllers:

@@ -1,4 +1,4 @@
-import pickle
+import numpy as np
 
 class Writer:
     def __init__(self,socket):
@@ -6,23 +6,27 @@ class Writer:
         self.MSP_HEADER="$M<"
         self.MSP_SET_COMMAND = 217
         self.MSP_SET_RAW_RC=200
+        self.MSP_ACC_TRIM=240
    
     def createPacketMSP(self,msp,payload):
         bf=[]
         for k in self.MSP_HEADER:
-            bf.append(int(k)&(0xFF))
+            bf.append(k)
         check_sum=0
-        if payload.empty():
+        if len(payload)==0:
             pl_size=0& 0xFF
         else:
             pl_size=len(payload) & 0xFF                         #package creation
         bf.append(pl_size)
-        check_sum^=(msp & 0xFF)
+        check_sum^=(pl_size & 0xFF)
 
-        if not payload.empty():
+        bf.append(msp & 0xFF)
+        check_sum ^= (msp & 0xFF)
+
+        if len(payload)!=0:
             for k in payload:
-                bf.append(int(k)&0xff)
-                check_sum^=int(k)&0xff
+                bf.append(k&0xFF)
+                check_sum^=k&0xFF
         bf.append(check_sum)
         return(bf)
 
@@ -41,8 +45,20 @@ class Writer:
         self.sendRequestMSP(self.createPacketMSP(self.MSP_SET_RAW_RC,rc_signals))
 
     def sendRequestMSP(self,data):
-        y=pickle.dumps(data)
-        self.socket.send(y)    
+        arr=bytearray()
+        for d in data:
+            if isinstance(d, str):
+                arr.extend(np.uint8(bytearray(d.encode("utf-8"))[0]))
+            else:
+                arr.append(np.uint8(d))
+        self.socket.send(arr)
+
+    def sendRequestMSP_ACC_TRIM(self):
+        self.sendRequestMSP(self.createPacketMSP(self.MSP_ACC_TRIM, []))
+
+    def sendRequestMSP_GET_DEBUG(self,requests):
+        for k in requests:
+            self.sendRequestMSP(self.createPacketMSP(k, []))
 
 
 
