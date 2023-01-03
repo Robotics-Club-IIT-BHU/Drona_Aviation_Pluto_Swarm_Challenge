@@ -1,21 +1,21 @@
 import cv2
 import threading
 import time
-class ImageFeed:
+class ImageServer:
 
-    def __init__(self,source,sleep_rate=0.7):
+    def __init__(self,source,sleep_rate,frame_rate):
         self.cap = source
         self.lock = threading.Lock()
         self.running = False
         self.grabbed = False
         self.sleep_rate = sleep_rate
-        self.frame_rate = 15
+        self.frame_rate = frame_rate
 
     def __refresh(self,flag):
         while self.running:
             self.lock.acquire()
             try:
-                self.prev = self.cap()
+                self.prev = self.capture()
                 if not self.grabbed: self.grabbed = True
             finally:
                 self.lock.release()
@@ -36,6 +36,10 @@ class ImageFeed:
         self.running = True
         refresh_loop = threading.Thread(target= self.__refresh, args=(1,))
         refresh_loop.start()
+
+    def capture(self):
+        img = cv2.imread(self.cap)
+        return img
         
     def close(self):
         self.running = False
