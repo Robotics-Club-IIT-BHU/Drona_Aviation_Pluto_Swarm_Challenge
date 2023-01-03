@@ -1,0 +1,7 @@
+# files
+*.zip
+*.pyc
+
+# folder
+__pycache__
+venv

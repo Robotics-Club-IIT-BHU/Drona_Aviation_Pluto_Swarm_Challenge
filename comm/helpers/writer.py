@@ -10,7 +10,7 @@ class Writer:
     def createPacketMSP(self,msp,payload):
         bf=[]
         for k in self.MSP_HEADER:
-            bf.append(int(k&(0xFF)))
+            bf.append(int(k)&(0xFF))
         check_sum=0
         if payload.empty():
             pl_size=0& 0xFF
@@ -21,18 +21,18 @@ class Writer:
 
         if not payload.empty():
             for k in payload:
-                bf.append(k&0xff)
-                check_sum^=k&0xff
+                bf.append(int(k)&0xff)
+                check_sum^=int(k)&0xff
         bf.append(check_sum)
         return(bf)
 
     def sendRequestMSP_SET_COMMAND(self,commandType):                                                    #set command
-        payload=[commandType&0xff]
+        payload=[commandType&0xff,0,0,0,0,0,0,0]
         self.sendRequestMSP(self.createPacketMSP(self.MSP_SET_COMMAND,payload))
 
     def sendRequestMSP_SET_RAW_RC(self,channels):
         index=0
-        rc_signals=[]
+        rc_signals=[i for i in range(16)]
         for i in range(0,8,1):
             rc_signals[index]=channels[i]&0xff
             index+=1                                                        #packet ki values 
