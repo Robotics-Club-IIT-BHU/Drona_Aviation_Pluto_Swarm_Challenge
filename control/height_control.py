@@ -1,4 +1,4 @@
-class cartesian_cnt:
+class altitude_cnt:
 
     def __init__(self):
         pass
