@@ -117,10 +117,11 @@ class send_data():
 		self.cmd.rcThrottle =1300
 		self.drone.sendCommand(self.cmd)
 	def take_off(self):
-		self.disarm()
-		self.box_arm()
-		self.cmd.commandType = 1
-		self.drone.sendCommand(self.cmd)
+		# self.disarm()
+		self.increase_height()
+		time.sleep(2)
+		# self.cmd.commandType = 1
+		# self.drone.sendCommand(self.cmd)
 	def land(self):
 		self.cmd.commandType = 2
 		self.drone.sendCommand(self.cmd)

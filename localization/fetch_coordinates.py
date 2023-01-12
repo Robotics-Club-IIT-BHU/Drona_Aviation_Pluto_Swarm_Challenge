@@ -6,15 +6,14 @@ import cv2.aruco as aruco
 
 class poseEstimation:
 
-    def __init__(self, frame, height):
+    def __init__(self, frame):
         self.frame = frame
         self.cam_matrix = np.load('cam_matrix.npy')
         self.distortion_coefficients = np.load('distortion_coefficients.npy')
         self.aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_100)
         self.aruco_parameters = aruco.DetectorParameters_create()
-        self.height = height
 
-    def fetch(self):
+    def fetch(self, height):
     
         gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         corners, ids, rejected_img_points = aruco.detectMarkers(gray,
@@ -34,7 +33,7 @@ class poseEstimation:
                                      1])
 
             camCoordsVec = np.dot(np.linalg.inv(self.cam_matrix), imgCoordsVec)
-            camCoordsVec = camCoordsVec * self.height
+            camCoordsVec = camCoordsVec * height
 
             camCoordsVec = camCoordsVec - tvec
             worldCoordsVec = np.dot(np.linalg.inv(rvec), camCoordsVec)

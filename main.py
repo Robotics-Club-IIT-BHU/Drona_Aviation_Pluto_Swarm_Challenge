@@ -3,7 +3,7 @@ from control import altitude_cnt, cartesian_cnt
 from comm import Drone
 from utils import sleepTimer
 from trajectory import BasicTrajectoryServer as trajectoryServer # Add task specific trajectory servers
-from ppm_driver import get_height
+from ppm_driver import Lidar
 
 def main():
 	drone = Drone(
@@ -14,13 +14,13 @@ def main():
 	# drone.prepare()
 	drone.arm()
 	drone.take_off()
-
+	lidar = Lidar()
 	trajectory_server = trajectoryServer(r, n) ## Define shape using polygon
 
 	img_server = ImageServer(source = 1, sleep_rate = 1, frame_rate = 30)
 	img_server.connect()
-	height = get_height()
-	coordinates = poseEstimation(img_server.prev, height)
+	height = lidar.Distance
+	coordinates = poseEstimation(img_server.prev)
 
 	# drone.getControl().start()
 	sleep_timer = sleepTimer(50) # rate
@@ -30,7 +30,8 @@ def main():
 			]
 
 	while drone.ok():
-		coordinates.fetch()
+		height = lidar.Distance
+		coordinates.fetch(height)
 		drone_info = drone.getState()
 		desired_states = trajectory_server.fetch_next_goal(coordinates, drone_info)
 		command = []
