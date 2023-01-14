@@ -3,9 +3,9 @@ import numpy as np
 class altitude_cnt:
 
     def __init__(self,g:float=9.8):
-        self.p = 20
-        self.d = 15
-        self.i = 0.001
+        self.p = 2.7
+        self.d = 205
+        self.i = 0.058
         self.control_timestep = 1./125.
         self.GRAVITY = g
         self.reset()
@@ -13,7 +13,7 @@ class altitude_cnt:
     def reset(self):
 
         self.last_height_e = 0
-        self.integral_height_e = np.zeros(3)
+        self.integral_height_e = 0
         self.control_counter =0
 
     def altitude_control(self, target_height, cur_pos, cur_rpy):
@@ -26,11 +26,11 @@ class altitude_cnt:
         self.integral_height_e = self.integral_height_e + z_err*self.control_timestep
         print(z_err, z_err_dot, self.last_height_e, self.integral_height_e)
         # thrust = (self.p * z_err + self.d * z_err_dot + self.GRAVITY) / math.cos(cur_rpy[0])*math.cos(cur_rpy[1])
-        thrust = (self.p * z_err + self.d * z_err_dot + self.GRAVITY)
+        thrust = (self.p * z_err + self.d * z_err_dot + self.i * self.integral_height_e + self.GRAVITY)
         print('thrust: ', thrust)
         thrust = thrust / 2  + 1500
-        if thrust < 900.:
-            thrust = 900.
+        if thrust < 1200:
+            thrust = 1200.
         if thrust > 2000:
             thrust = 2000 
         return [1500,1500,thrust,1500]
