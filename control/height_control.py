@@ -3,8 +3,8 @@ import numpy as np
 class altitude_cnt:
 
     def __init__(self,g:float=9.8):
-        self.p = 25
-        self.d = 4
+        self.p = 20
+        self.d = 15
         self.i = 0.001
         self.control_timestep = 1./125.
         self.GRAVITY = g

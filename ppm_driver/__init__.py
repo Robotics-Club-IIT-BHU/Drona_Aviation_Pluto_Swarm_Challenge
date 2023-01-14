@@ -1,1 +1,1 @@
-from lidar import Lidar
+from .lidar import Lidar
