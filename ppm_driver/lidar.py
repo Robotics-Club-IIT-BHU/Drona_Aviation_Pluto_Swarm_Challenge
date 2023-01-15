@@ -1,9 +1,11 @@
 import threading
 import time
 import socket
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Lidar:
-    def __init__(self,host,port,timeout):
+    def __init__(self,host,port,timeout,plotter:bool=False,reference_line:float=0):
         self.HOST=host
         self.PORT=port
         self.timeout=timeout
@@ -11,6 +13,8 @@ class Lidar:
         self.SOCKET=None
         self.Distance=0
         while self.SOCKET is None: self.start_server()
+        self.plotter=plotter
+        if(self.plotter): self.start_plotter(reference_line)
         self.start_threads()
     
     def start_server(self):
@@ -52,7 +56,12 @@ class Lidar:
     def reader(self):
         while self.runThreads:
             self.read_frame()
-        
+            if self.plotter:
+                self.line1.set_xdata(self.x)
+                self.line1.set_ydata(self.Distance)
+                self.figure.canvas.draw()
+                self.figure.canvas.flush_events()
+
 
     def start_threads(self):
         self.t2 = threading.Thread(target=self.reader)
@@ -64,6 +73,19 @@ class Lidar:
         self.SOCKET.close()
         time.sleep(0.5)
         print("Lidar Connection Ended!!!")
+    
+    def start_plotter(self,value):
+        self.x = np.linspace(0, 10, 100)
+        self.y = np.zeros(100)
+        self.reference = np.array([value for x in range(100)])
+        plt.ion()
+        self.figure, ax = plt.subplots(figsize=(10, 8))
+        self.line1, = ax.plot(self.x, self.y,'b-',label="Height")
+        self.line2, = ax.plot(self.x, self.reference,'r-',label="Reference")
+        plt.title("Height Plotter", fontsize=20)
+        plt.xlabel("X-axis")
+        plt.ylabel("Y-axis")
+
 
 if __name__=="__main__":
     lidar=Lidar("192.168.4.124",8888,1)

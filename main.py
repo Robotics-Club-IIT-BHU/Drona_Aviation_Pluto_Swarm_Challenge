@@ -12,12 +12,13 @@ def main():
 			23,
 			1
 			)
+	lidar = Lidar("192.168.4.124",8888,1,plotter=True,reference_line=50)
+
 	# drone.prepare()
 	drone.arm()
 	print('Armed')
 	drone.take_off()
 	print('Takeoff initiated')
-	lidar = Lidar("192.168.4.124",8888,1)
 	# trajectory_server = trajectoryServer(r, n) ## Define shape using polygon
 
 	# img_server = ImageServer(source = 1, sleep_rate = 1, frame_rate = 30)
@@ -28,13 +29,12 @@ def main():
 	# drone.getControl().start()
 	# sleep_timer = sleepTimer(50) # rate
 	controllers = [
-			altitude_cnt(),
+			altitude_cnt(mode=1),
 			# cartesian_cnt()
 			]
 
 	while drone.ok():
 		height = lidar.Distance
-		print('height- ', lidar.Distance)
 		# coordinates.fetch(height)
 		drone_info = drone.getState()
 		# desired_states = trajectory_server.fetch_next_goal(coordinates, drone_info)
@@ -60,6 +60,7 @@ def main():
 	drone.land()
 	# sleep_timer.sleep()
 	time.sleep(0.05)
+
 	
 	del drone
 	# del trajectory_server

@@ -135,13 +135,16 @@ class Drone:
         time.sleep(0.5)
 
     def disarm(self):
-        self.cmd.rcThrottle =1300
-        self.cmd.rcAUX4 = 1200
+        self.cmd.rcThrottle =1500
+        self.cmd.rcAUX4 = 1000
         self.sendCommand(self.cmd)
         time.sleep(0.5)
 
     def increase_height(self):
         self.cmd.rcThrottle = 2000
+
+    def decrease_height(self):
+        self.cmd.rcThrottle =1300
 
     def take_off(self):
         # self.reset()
@@ -154,9 +157,7 @@ class Drone:
         self.reset()
 
     def land(self):
-        self.reset()
-        self.cmd.commandType = 2
-        self.sendCommand(self.cmd)
+        self.decrease_height()
     
     def reset(self):
         self.cmd.rcRoll =1500
@@ -176,6 +177,8 @@ class Drone:
         return self.runThreads and self.socketStable
     
     def __del__(self):
+        self.land()
+        self.disarm()
         self.runThreads=False
         time.sleep(0.5)
         self.SOCKET.close()
