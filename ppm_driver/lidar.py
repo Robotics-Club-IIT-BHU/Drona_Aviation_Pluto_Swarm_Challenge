@@ -56,18 +56,31 @@ class Lidar:
     def reader(self):
         while self.runThreads:
             self.read_frame()
-            if self.plotter:
-                self.line1.set_xdata(self.x)
-                self.line1.set_ydata(self.Distance)
-                self.figure.canvas.draw()
-                self.figure.canvas.flush_events()
+    
+    def run_plotter(self):
+        while self.plotter:
+            self.y=np.delete(self.y,0)
+            self.y=np.append(self.y, self.Distance)
+            self.line1.set_xdata(self.x)
+            self.line1.set_ydata(self.Distance)
+            self.figure.gca().relim()
+            self.figure.gca().autoscale_view()
+            self.figure.canvas.draw()
+            self.figure.canvas.flush_events()
+            time.sleep(0.1)
+        
+        plt.close('all')
 
 
     def start_threads(self):
-        self.t2 = threading.Thread(target=self.reader)
-        self.t2.start()
+        self.t1 = threading.Thread(target=self.reader)
+        self.t1.start()
+        if self.plotter:
+            self.t2 = threading.Thread(target=self.run_plotter)
+            self.t2.start()
     
     def __del__(self):
+        self.plotter=False
         self.runThreads=False
         time.sleep(0.5)
         self.SOCKET.close()
@@ -77,14 +90,14 @@ class Lidar:
     def start_plotter(self,value):
         self.x = np.linspace(0, 10, 100)
         self.y = np.zeros(100)
-        self.reference = np.array([value for x in range(100)])
+        self.reference = np.array([value for _ in range(100)])
         plt.ion()
         self.figure, ax = plt.subplots(figsize=(10, 8))
         self.line1, = ax.plot(self.x, self.y,'b-',label="Height")
         self.line2, = ax.plot(self.x, self.reference,'r-',label="Reference")
         plt.title("Height Plotter", fontsize=20)
-        plt.xlabel("X-axis")
-        plt.ylabel("Y-axis")
+        plt.xlabel("Instance")
+        plt.ylabel("Height")
 
 
 if __name__=="__main__":
