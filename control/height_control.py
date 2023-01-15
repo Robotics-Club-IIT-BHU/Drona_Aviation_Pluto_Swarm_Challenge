@@ -10,7 +10,7 @@ class altitude_cnt:
         self.i = 0.0
         self.control_timestep = 1./125.
         self.GRAVITY = g
-        self.tracker_mode=mode
+        self.tracker_mode = mode
         self.reset()
         if(self.tracker_mode): self.tracker_window()
 
@@ -18,12 +18,9 @@ class altitude_cnt:
 
         self.last_height_e = 0
         self.integral_height_e = 0
-        self.control_counter =0
+        self.control_counter = 0
 
     def altitude_control(self, target_height, cur_pos, cur_rpy):
-        print(target_height,cur_pos[2])
-        # print()
-
         z_err = target_height - cur_pos[2]
         z_err_dot = (z_err - self.last_height_e) / self.control_timestep
         self.last_height_e = z_err
@@ -36,8 +33,8 @@ class altitude_cnt:
         print('thrust: ', thrust)
         thrust = thrust / 2  + 1600
         print('After thrust- ', thrust)
-        if thrust < 1400:
-            thrust = 1400
+        if thrust < 1500:
+            thrust = 1500
         if thrust > 2000:
             thrust = 2000 
         return [1500,1500,thrust,1500]
@@ -59,12 +56,12 @@ class altitude_cnt:
     
     def tracker_window(self):
         cv2.namedWindow('controls')
-        cv2.createTrackbar('p','controls',0,25,self.nothing)
-        cv2.createTrackbar('i','controls',0,25,self.nothing)
-        cv2.createTrackbar('d','controls',0,25,self.nothing)
+        cv2.createTrackbar('p','controls',0,250,self.nothing)
+        cv2.createTrackbar('i','controls',0,250,self.nothing)
+        cv2.createTrackbar('d','controls',0,250,self.nothing)
     
     def update_pid(self):
-        self.p=cv2.getTrackbarPos('p','controls')
-        self.i=cv2.getTrackbarPos('i','controls')/25
-        self.d=cv2.getTrackbarPos('d','controls')/25
+        self.p=cv2.getTrackbarPos('p','controls')/20
+        self.i=cv2.getTrackbarPos('i','controls')/100
+        self.d=cv2.getTrackbarPos('d','controls')/100
         cv2.waitKey(1)

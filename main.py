@@ -44,6 +44,7 @@ def main():
 		# command=controllers
 		command = drone.command_preprocess(command)
 		drone.sendCommand(command)
+		lidar.show_plotter()
 		# if KeyboardInterrupt:
 		# 	drone.disarm()
 		# sleep_timer.sleep()
