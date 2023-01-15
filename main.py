@@ -1,5 +1,5 @@
 from localization import poseEstimation, ImageServer
-from control import altitude_cnt, cartesian_cnt
+from control import altitude_cnt, cartesian_cnt, rpy_cnt
 from comm import Drone
 # from utils import sleepTimer
 # from trajectory import BasicTrajectoryServer as trajectoryServer # Add task specific trajectory servers
@@ -30,6 +30,7 @@ def main():
 	# sleep_timer = sleepTimer(50) # rate
 	controllers = [
 			altitude_cnt(mode=1),
+			rpy_cnt()
 			# cartesian_cnt()
 			]
 
@@ -39,8 +40,9 @@ def main():
 		drone_info = drone.getState()
 		# desired_states = trajectory_server.fetch_next_goal(coordinates, drone_info)
 		command = []
-		for controller in controllers:
-			command += controller.update([0,0,height], drone_info, 50)
+		# for controller in controllers:
+		command = controllers[0].update([0,0,height], drone_info, 50)
+		command += controllers[1].update([1500, 1500, 1500], drone_info)
 		# command=controllers
 		command = drone.command_preprocess(command)
 		drone.sendCommand(command)
