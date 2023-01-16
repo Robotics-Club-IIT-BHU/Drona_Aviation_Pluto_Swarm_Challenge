@@ -31,11 +31,11 @@ class altitude_cnt:
         print('p: ', self.p * z_err)
         print('diff: ', self.d * z_err_dot)
         print('thrust: ', thrust)
-        thrust = thrust / 2  + 1600
+        thrust = thrust / 2  + 1700
         print('After thrust- ', thrust)
-        if thrust < 1500:
+        if thrust < 1650:
             thrust = 1500
-        if thrust > 2000:
+        if thrust > 1750:
             thrust = 2000 
         return [1500,1500,thrust,1500]
 
@@ -56,7 +56,7 @@ class altitude_cnt:
     
     def tracker_window(self):
         cv2.namedWindow('controls')
-        cv2.createTrackbar('p','controls',0,250,self.nothing)
+        cv2.createTrackbar('p','controls',170,500,self.nothing)
         cv2.createTrackbar('i','controls',0,250,self.nothing)
         cv2.createTrackbar('d','controls',0,250,self.nothing)
     

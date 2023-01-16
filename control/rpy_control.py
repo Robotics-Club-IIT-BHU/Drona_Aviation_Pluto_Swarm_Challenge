@@ -37,7 +37,7 @@ class rpy_cnt:
         # print('thrust: ', thrust)
         reqd_rpy = reqd_rpy / 2  + 1600
         # print('After thrust- ', thrust)
-        if reqd_rpy < [1400, 1400, 1400]:
+        if reqd_rpy < np.ar[1400, 1400, 1400]:
             reqd_rpy = [1400, 1400, 1400]
         if reqd_rpy > [2000, 2000, 2000]:
             reqd_rpy = [2000, 2000, 2000] 
