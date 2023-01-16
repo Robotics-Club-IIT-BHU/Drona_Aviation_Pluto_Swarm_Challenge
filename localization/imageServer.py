@@ -10,6 +10,7 @@ class ImageServer:
         self.grabbed = False
         self.sleep_rate = sleep_rate
         self.frame_rate = frame_rate
+        self.vid = cv2.VideoCapture(self.cap)
 
     def __refresh(self,flag):
         while self.running:
@@ -27,7 +28,7 @@ class ImageServer:
         try:
             if not self.grabbed:
                 self.grabbed=True
-                self.prev = self.cap()
+                self.prev = self.capture()
         finally:
             self.lock.release()
         return self.prev
@@ -38,7 +39,7 @@ class ImageServer:
         refresh_loop.start()
 
     def capture(self):
-        img = cv2.imread(self.cap)
+        ret, img = self.vid.read()
         return img
         
     def close(self):
