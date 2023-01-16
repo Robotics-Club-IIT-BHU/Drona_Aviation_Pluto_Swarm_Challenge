@@ -39,7 +39,7 @@ def main():
 		height = lidar.Distance
 		if img_server.grabbed:
 			pose=coordinates.fetch(height,img_server.prev)
-			print(pose)
+			# print(pose)
 		else:
 			print("Image Not Found")
 		# print(height)

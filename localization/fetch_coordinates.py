@@ -9,8 +9,8 @@ class poseEstimation:
 
     def __init__(self, frame):
         self.frame = frame
-        self.cam_matrix = np.load(dir+'/camera_matrix.npy')
-        self.distortion_coefficients = np.load(dir+'/distortion_coefficients.npy')
+        self.cam_matrix = np.load(dir+'/camera_matrix_3.npy')
+        self.distortion_coefficients = np.load(dir+'/distortion_coefficients_3.npy')
         self.aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
         self.aruco_parameters = aruco.DetectorParameters_create()
 
@@ -25,7 +25,7 @@ class poseEstimation:
         cv2.waitKey(100)
 
         if len(corners) > 0:
-            rvec, tvec, markerPoints = aruco.estimatePoseSingleMarkers(corners[0], 0.45, self.cam_matrix,
+            rvec, tvec, markerPoints = aruco.estimatePoseSingleMarkers(corners[0], 0.045, self.cam_matrix,
                                                                        self.distortion_coefficients)
             rvec = np.reshape(rvec, (3,1))
             tvec = np.reshape(tvec, (3,1))
@@ -53,7 +53,9 @@ class poseEstimation:
 
             return worldCoordsVec
             '''
-
+            # print('rot', rotmat)
+            print('tvec', tvec)
+            # print('rvec', rvec)
             tf_m2c = np.copy(rotmat)
             tf_m2c = np.hstack((tf_m2c, tvec))
             tf_m2c = np.vstack((tf_m2c, [0, 0, 0, 1]))    # transformation matrix: camera with respect to marker 
