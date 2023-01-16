@@ -30,8 +30,10 @@ class poseEstimation:
             rvec = np.reshape(rvec, (3,1))
             tvec = np.reshape(tvec, (3,1))
             rotmat, _ = cv2.Rodrigues(rvec)
-            # print(rotmat.shape)
-            # print(tvec.shape)
+
+            '''
+            print(rotmat.shape)
+            print(tvec.shape)
             imgx = (corners[0][0][0][0] + corners[0][0][1][0] + corners[0][0][2][0] + corners[0][0][3][0])/4
             imgy = (corners[0][0][0][1] + corners[0][0][1][1] + corners[0][0][2][1] + corners[0][0][3][1])/4
             # print(imgx, imgy)
@@ -50,3 +52,20 @@ class poseEstimation:
             worldCoordsVec = np.dot(np.linalg.inv(rotmat), camCoordsVec)
 
             return worldCoordsVec
+            '''
+
+            tf_m2c = np.copy(rotmat)
+            tf_m2c = np.hstack((tf_m2c, tvec))
+            tf_m2c = np.vstack((tf_m2c, [0, 0, 0, 1]))    # transformation matrix: camera with respect to marker 
+
+
+            tf_c2m = np.transpose(rotmat)
+
+            ts = -np.transpose(rotmat)
+            ts = np.matmul(ts, tvec)   # coordinates of marker with respect to the camera
+            
+            tf_c2m = np.hstack((tf_c2m, ts))   
+
+            tf_c2m = np.vstack((tf_c2m, [0, 0, 0, 1]))  # transformation matrix: marker with respect to camera
+
+            return ts
