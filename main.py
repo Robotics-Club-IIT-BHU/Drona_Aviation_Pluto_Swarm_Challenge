@@ -59,14 +59,14 @@ def main():
 		time.sleep(0.01)
 	
 
-	final_command = []
-	for cont in controllers:
-		final_command += cont.kill()
-	final_command = drone.command_preprocess(final_command)
-	drone.sendCommand(command)
-	# sleep_timer.sleep()
-	time.sleep(0.05)
-	drone.land()
+	# final_command = []
+	# for cont in controllers:
+	# 	final_command += cont.kill()
+	# final_command = drone.command_preprocess(final_command)
+	# drone.sendCommand(command)
+	# # sleep_timer.sleep()
+	# time.sleep(0.05)
+	# drone.land()
 	# sleep_timer.sleep()
 	time.sleep(0.05)
 
