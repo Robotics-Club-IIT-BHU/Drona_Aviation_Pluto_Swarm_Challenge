@@ -1,15 +1,16 @@
 import numpy as np
 import cv2
 import cv2.aruco as aruco
-import sys
-import time
+import os
+
+dir = os.path.dirname(__file__)
 
 class poseEstimation:
 
     def __init__(self, frame):
         self.frame = frame
-        self.cam_matrix = np.load('/home/ankur/Documents/Robo/interiit/Drona-Aviation-Inter-IIT-2023/localization/camera_matrix.npy')
-        self.distortion_coefficients = np.load('/home/ankur/Documents/Robo/interiit/Drona-Aviation-Inter-IIT-2023/localization/distortion_coefficients.npy')
+        self.cam_matrix = np.load(dir+'/camera_matrix.npy')
+        self.distortion_coefficients = np.load(dir+'/distortion_coefficients.npy')
         self.aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
         self.aruco_parameters = aruco.DetectorParameters_create()
 
