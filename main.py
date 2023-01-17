@@ -30,7 +30,7 @@ def main():
 	# drone.getControl().start()
 	# sleep_timer = sleepTimer(50) # rate
 	controllers = [
-			altitude_cnt(mode=1),
+			altitude_cnt(tracker_mode=True),
 			# rpy_cnt()
 			# cartesian_cnt()
 			]
@@ -63,7 +63,7 @@ def main():
 	# for cont in controllers:
 	# 	final_command += cont.kill()
 	# final_command = drone.command_preprocess(final_command)
-	# drone.sendCommand(command)
+	# drone.sendCommand(final_command)
 	# # sleep_timer.sleep()
 	# time.sleep(0.05)
 	# drone.land()
@@ -74,6 +74,6 @@ def main():
 	del drone
 	# del trajectory_server
 	del controllers
-	print("completed run")
+	print("Completed run")
 
 main()

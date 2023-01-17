@@ -45,7 +45,7 @@ class altitude_cnt:
         return self.altitude_control(target_pos,cur_pos,cur_rpy)
     
     def kill(self):
-        return True
+        return [1500,1500,1300,1500]
     
     def __del__(self):
         cv2.destroyAllWindows()
