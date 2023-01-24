@@ -111,18 +111,19 @@ class send_data():
 		self.cmd.commandType = 0
 		self.drone.sendCommand(self.cmd)
 	def increase_height(self):
-		self.cmd.rcThrottle = 2000
+		self.cmd.rcThrottle = 2100
 		self.drone.sendCommand(self.cmd)
 	def decrease_height(self):
 		self.cmd.rcThrottle =1300
 		self.drone.sendCommand(self.cmd)
 	def take_off(self):
-		# self.disarm()
-		for i in range(6500000):
-			self.increase_height()
-		self.reset()
-		# self.cmd.commandType = 1
-		# self.drone.sendCommand(self.cmd)
+		self.disarm()
+		self.box_arm()
+		# for i in range(6500000):
+		# 	self.increase_height()
+		# self.reset()
+		self.cmd.commandType = 1
+		self.drone.sendCommand(self.cmd)
 	def land(self):
 		self.cmd.commandType = 2
 		self.drone.sendCommand(self.cmd)

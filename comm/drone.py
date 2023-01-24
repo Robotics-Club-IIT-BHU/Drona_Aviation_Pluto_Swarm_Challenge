@@ -75,11 +75,11 @@ class Drone:
                     self.Writer.sendRequestMSP_GET_DEBUG(request)
 
                     if(self.commandType != 0):
-                        self.Writer.sendRequestMSP_SET_COMMAND(commandType)
-                        commandType = 0
+                        self.Writer.sendRequestMSP_SET_COMMAND(self.commandType)
+                        self.commandType = 0
                     elif(self.commandType != 0 and self.isAutoPilotOn and droneRC[7] == 1500):
-                        self.Writer.sendRequestMSP_SET_COMMAND(commandType)
-                        commandType = 0
+                        self.Writer.sendRequestMSP_SET_COMMAND(self.commandType)
+                        self.commandType = 0
                     
                     self.lock.release()
             except socket.error as e:
@@ -98,6 +98,7 @@ class Drone:
         self.userRC[6] = data.rcAUX3
         self.userRC[7] = data.rcAUX4
         self.isAutoPilotOn = data.isAutoPilotOn
+        self.commandType = data.commandType
     
     def command_preprocess(self,arr):
         self.cmd.rcRoll=arr[0]
