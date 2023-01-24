@@ -5,8 +5,8 @@ import cv2
 class altitude_cnt:
 
     def __init__(self,g:float=9.8,mode:bool=False):
-        self.p = 5.7
-        self.d = 0.02
+        self.p = 17.7
+        self.d = 0.2
         self.i = 0.0
         self.control_timestep = 1./125.
         self.GRAVITY = g
@@ -33,9 +33,9 @@ class altitude_cnt:
         print('thrust: ', thrust)
         thrust = thrust / 2  + 1700
         print('After thrust- ', thrust)
-        if thrust < 1650:
-            thrust = 1500
-        if thrust > 1750:
+        if thrust < 1200:
+            thrust = 1200
+        if thrust > 2000:
             thrust = 2000 
         return [1500,1500,thrust,1500]
 

@@ -42,9 +42,9 @@ class Writer:
         index=0
         rc_signals=[i for i in range(16)]
         for i in range(0,8,1):
-            rc_signals[index]=channels[i]&0xff
+            rc_signals[index]=int(channels[i])&0xff
             index+=1                                                        
-            rc_signals[index]=(channels[i]>>8)& 0xff
+            rc_signals[index]=int(int(channels[i])>>8)& 0xff
             index+=1
         self.sendRequestMSP(self.createPacketMSP(self.MSP_SET_RAW_RC,rc_signals))
 

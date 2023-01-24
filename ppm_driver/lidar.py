@@ -51,7 +51,7 @@ class Lidar:
     
     def read_frame(self):
         message=self.readnbyte()
-        self.Distance =int(message[0]<<0)|int(message[1]<<8)
+        self.Distance = int.from_bytes(message, byteorder='big', signed=False)
 
     def reader(self):
         while self.runThreads:
@@ -66,6 +66,7 @@ class Lidar:
             self.figure.gca().autoscale_view()
             self.figure.canvas.draw()
             self.figure.canvas.flush_events()
+            plt.savefig("Plot.jpg")
 
 
     def start_threads(self):
@@ -94,8 +95,8 @@ class Lidar:
 
 
 if __name__=="__main__":
-    lidar=Lidar("192.168.4.124",8888,1,plotter=True,reference_line=50)
+    lidar=Lidar("192.168.0.125",8888,1,plotter=True,reference_line=50)
     while True:
         print(lidar.Distance)
         lidar.show_plotter()
-        time.sleep(0.5)
+        time.sleep(0.01)

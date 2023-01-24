@@ -10,20 +10,20 @@ Integral Limit
 class altitude_cnt:
 
     def __init__(self,tracker_mode:bool=False):
-        self.kp = 5.7
-        self.kd = 0.02
+        self.kp = 4.0
+        self.kd = 0.0
         self.ki = 0.0
         self.imax = 400.0
         self.freq = 20
         self.lastderivative=None
         self.lasterror=0
-        self.scaler=1
+        self.scaler=2
         self.last_time = self.current_time()
         self.rpy_ret=1500
         self.tracker_mode=tracker_mode
         if(self.tracker_mode): self.tracker_window()
 
-    def current_time(): return round(time.time()*1000)
+    def current_time(self): return round(time.time()*1000)
     
     def reset_I(self):
         self.integrator=0
@@ -77,10 +77,12 @@ class altitude_cnt:
             I=self.integrator
             output+=I
 
+        output+=1700
         # Crop output
-        if output < 1500: output = 1500
-        if output > 2000: output = 2000 
+        if output < 1300: output = 1300
+        if output > 2100: output = 2100 
         if self.tracker_mode: cv2.waitKey(1)
+        print("Throttle=",output)
         return [self.rpy_ret,self.rpy_ret,output,self.rpy_ret]
 
     def update_p(self,x): self.kp=x/20

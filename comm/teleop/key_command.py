@@ -1,8 +1,8 @@
 import sys, select, termios, tty
 from key_handling import send_data
 
-sys.path.insert(0, '../')
-from drone import Drone
+sys.path.insert(0, '../../')
+from comm import Drone
 
 msg = """
 Control Your Drone!
@@ -76,7 +76,7 @@ if __name__=="__main__":
                       '4' : 45}
 
     control_to_change_value=('u','o',',','z','c') #tuple containing the key that change the value
-    drone=Drone("192.168.4.1", 23, 1)
+    drone=Drone("192.168.0.100", 23, 1)
     publish=send_data(drone)
     print(msg)
     try:

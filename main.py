@@ -9,50 +9,51 @@ import numpy as np
 
 def main():
 	drone = Drone(
-			"192.168.4.1",
+			"192.168.0.100",
 			23,
 			1
 			)
-	lidar = Lidar("192.168.4.124",8888,1,plotter=True,reference_line=50)
+	lidar = Lidar("192.168.0.125",8888,1,plotter=False,reference_line=100)
 
 	# drone.prepare()
-	# drone.arm()
-	# print('Armed')
-	# drone.take_off()
-	# print('Takeoff initiated')
+	drone.arm()
+	print('Armed')
+	drone.take_off()
+	print('Takeoff initiated')
 	# trajectory_server = trajectoryServer(r, n) ## Define shape using polygon
 
-	img_server = ImageServer(source = 2, sleep_rate = 1, frame_rate = 30)
-	img_server.connect()
+	# img_server = ImageServer(source = 2, sleep_rate = 1, frame_rate = 30)
+	# img_server.connect()
 	height = lidar.Distance
-	coordinates = poseEstimation(img_server.prev)
+	# coordinates = poseEstimation(img_server.prev)
 
 	# drone.getControl().start()
 	# sleep_timer = sleepTimer(50) # rate
 	controllers = [
-			altitude_cnt(tracker_mode=True),
+			altitude_cnt(tracker_mode=False),
 			# rpy_cnt()
 			# cartesian_cnt()
 			]
 
 	while drone.ok():
 		height = lidar.Distance
-		if img_server.grabbed:
-			pose=coordinates.fetch(height,img_server.prev)
-			# print(pose)
-		else:
-			print("Image Not Found")
+		# if img_server.grabbed:
+		# 	pose=coordinates.fetch(height,img_server.prev)
+		# 	# print(pose)
+		# else:
+		# 	print("Image Not Found")
 		# print(height)
 		drone_info = drone.getState()
 		# desired_states = trajectory_server.fetch_next_goal(coordinates, drone_info)
-		# command = []
+		command = []
 		# for controller in controllers:
-		# command = controllers[0].update([0,0,height], drone_info, 50)
+		command = controllers[0].update([0,0,height], drone_info, 100)
+		print(height)
 		# command += controllers[0].update(np.array([1500, 1500, 1500]), np.array(drone_info))
 		# command=controllers
-		# command = drone.command_preprocess(command)
-		# drone.sendCommand(command)
-		lidar.show_plotter()
+		command = drone.command_preprocess(command)
+		drone.sendCommand(command)
+		# lidar.show_plotter()
 		# if KeyboardInterrupt:
 		# 	drone.disarm()
 		# sleep_timer.sleep()
