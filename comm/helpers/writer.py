@@ -20,6 +20,9 @@ class Writer:
         else:
             pl_size=len(payload) & 0xFF                         
         bf.append(pl_size)
+        
+        #checking packet integrity
+        #calculating by XOR operation one bita t a time
         check_sum^=(pl_size & 0xFF)
 
         bf.append(msp & 0xFF)
