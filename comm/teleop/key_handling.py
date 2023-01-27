@@ -1,6 +1,7 @@
 import time
 
 class Data():
+	#defining the initial state of the drone with roll pitch and yaw value 
 	def __init__(self):
 		self.rcRoll =1500
 		self.rcPitch = 1500
@@ -22,6 +23,7 @@ class send_data():
 		self.cmd=Data()
 		self.drone=drone
 
+	#arming the drone 
 	def arm(self):
 		self.cmd.rcRoll=1500
 		self.cmd.rcYaw=1500
@@ -32,6 +34,7 @@ class send_data():
 		self.drone.sendCommand(self.cmd)
 		time.sleep(1)
 
+	#this is the function that is called while taking off
 	def box_arm(self):
 		self.cmd.rcRoll=1500
 		self.cmd.rcYaw=1500
@@ -42,12 +45,14 @@ class send_data():
 		self.drone.sendCommand(self.cmd)
 		time.sleep(0.5)
 
+	#diarming the drone 
 	def disarm(self):
 		self.cmd.rcThrottle =1300
 		self.cmd.rcAUX4 = 1200
 		self.drone.sendCommand(self.cmd)
 		time.sleep(0.5)
 
+	#identify the key pressed and then processing the respective command by calling the proper function
 	def indentify_key(self, msg):
 		self.key_value = msg
 
@@ -85,24 +90,31 @@ class send_data():
 			self.right_yaw()
 		self.drone.sendCommand(self.cmd)
 
+	#defining the forward function for drone 
 	def forward(self):
 		self.cmd.rcPitch =1600
 		self.drone.sendCommand(self.cmd)
+	#defining the backward function for drone 
 	def backward(self):
 		self.cmd.rcPitch =1400
 		self.drone.sendCommand(self.cmd)
+	#defining the left movement 
 	def left(self):
 		self.cmd.rcRoll =1400
 		self.drone.sendCommand(self.cmd)
+	#defining the right movement 
 	def right(self):
 		self.cmd.rcRoll =1600
 		self.drone.sendCommand(self.cmd)
+	#decreasing the yaw value of drone 
 	def left_yaw(self):
 		self.cmd.rcYaw = 1200
 		self.drone.sendCommand(self.cmd)
+	#increasing the yaw value of drone 
 	def right_yaw(self):
 		self.cmd.rcYaw = 1800
 		self.drone.sendCommand(self.cmd)
+	#resetting the drone to its default state 
 	def reset(self):
 		self.cmd.rcRoll =1500
 		self.cmd.rcThrottle =1600
@@ -110,12 +122,16 @@ class send_data():
 		self.cmd.rcYaw = 1500
 		self.cmd.commandType = 0
 		self.drone.sendCommand(self.cmd)
+	
+	#increasing the height of the drone by decreasing the throttle
 	def increase_height(self):
 		self.cmd.rcThrottle = 2100
 		self.drone.sendCommand(self.cmd)
+	#decreasing the height of drone by decreasing the throttle
 	def decrease_height(self):
 		self.cmd.rcThrottle =1300
 		self.drone.sendCommand(self.cmd)
+	#taking off function
 	def take_off(self):
 		self.disarm()
 		self.box_arm()
@@ -124,6 +140,7 @@ class send_data():
 		# self.reset()
 		self.cmd.commandType = 1
 		self.drone.sendCommand(self.cmd)
+	#landing of drone 
 	def land(self):
 		self.cmd.commandType = 2
 		self.drone.sendCommand(self.cmd)
