@@ -132,7 +132,8 @@ class Reader:
           else:
             self.c_state = IDLE
         elif (self.c_state == HEADER_ARROW or self.c_state == HEADER_ERR):
-          self.err_rcvd = (self.c_state == HEADER_ERR)  #checking for an error message received
+          #checking for an error message received
+          self.err_rcvd = (self.c_state == HEADER_ERR)  
           self.dataSize = (c & 0xFF)
           self.offset = 0
           self.checksum = 0
@@ -162,16 +163,21 @@ class Reader:
           self.FC_versionPatchLevel=self.read8()
           
       elif self.cmd==MSP_RAW_IMU:
+        ##reading values from accelerometer,gyroscope and magnetometer
+        
+        #accelerometer
           accX=self.read16()
           accY=self.read16()
           accZ=self.read16()
           self.IMU_DATA["acc"]=[accX,accY,accZ]
 
+          #gyroscope
           gyroX=self.read16()/8
           gyroY=self.read16()/8
           gyroZ=self.read16()/8
           self.IMU_DATA["gyro"]=[gyroX,gyroY,gyroZ]
 
+          #magnetometer
           magX=self.read16()/3
           magY=self.read16()/3
           magZ=self.read16()/3
