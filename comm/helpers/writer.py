@@ -3,6 +3,7 @@ import numpy as np
 class Writer:
     def __init__(self,socket):
         self.socket=socket
+        #this is the basic construct of MSP packet as defined in the documentation
         self.MSP_HEADER="$M<"
         #default value of MSP packets
         self.MSP_SET_COMMAND = 217
@@ -11,6 +12,7 @@ class Writer:
     
     #function for package creation for a given payload
     def createPacketMSP(self,msp,payload):
+        #this is the list that keeps on adding the MSP packet values at the end
         bf=[]
         for k in self.MSP_HEADER:
             bf.append(k)
@@ -48,6 +50,7 @@ class Writer:
             index+=1
         self.sendRequestMSP(self.createPacketMSP(self.MSP_SET_RAW_RC,rc_signals))
 
+    #sendig requesr for MSP packet
     def sendRequestMSP(self,data):
         arr=bytearray()
         for d in data:
