@@ -48,6 +48,7 @@ MSP_SET_COMMAND = 217
 # MSP_SET_POS= 216
 # MSP_SET_COMMAND = 217
 
+#inputBuffer used for taking input values 
 inputBuffer=[None]*1024
 recbuf=[None]*1024
 
@@ -83,6 +84,7 @@ def read32():
 
 class Reader:
     def __init__(self,socket):
+        #initialising the values of parameters of MSP packets
         self.socket=socket
         self.inputBuffer=bytearray(1024)
         self.bufferIndex=0
@@ -94,6 +96,7 @@ class Reader:
         self.cmd = 0
 
         """Global variables of data"""
+        #initialising the values of drone parameters
         self.IMU_DATA={"acc":0,"gyro":0,"mag":0}
         self.ATTITUDE={"roll":0,"pitch":0,"yaw":0}
         self.ALTITUDE=0
@@ -114,12 +117,13 @@ class Reader:
           pos += cr
       return bytes(buff)
     
-
+    #reading messages
     def read_frame(self):
         
         message=self.readnbyte()
         c=np.uint8(message[0])
         #the message in the byte form is compared to the MSP packet message
+        #this each elif statement is a step ahead of the last elif in terms of MSP construct
         if (self.c_state == IDLE):
           self.c_state =  HEADER_START if (c == np.uint8(bytearray(('$').encode("utf-8"))[0])) else IDLE #36
         elif (self.c_state == HEADER_START):
@@ -151,10 +155,12 @@ class Reader:
             if not self.err_rcvd:
               self.bufferIndex=0
               self.evaluateCommand()
+          #then we again assign the value as IDLE for the next MSP packet
           self.c_state = IDLE
     
 
     ##function to read the input values of the corresponding MSP packet
+    #evaluating the value of command
     def evaluateCommand(self):
       if self.cmd==MSP_FC_VERSION:
           self.FC_versionMajor=self.read8()
@@ -162,30 +168,36 @@ class Reader:
           self.FC_versionPatchLevel=self.read8()
           
       elif self.cmd==MSP_RAW_IMU:
+          #accelerometer
           accX=self.read16()
           accY=self.read16()
           accZ=self.read16()
           self.IMU_DATA["acc"]=[accX,accY,accZ]
 
+          #gyroscope
           gyroX=self.read16()/8
           gyroY=self.read16()/8
           gyroZ=self.read16()/8
           self.IMU_DATA["gyro"]=[gyroX,gyroY,gyroZ]
 
+          #magnetometer
           magX=self.read16()/3
           magY=self.read16()/3
           magZ=self.read16()/3
           self.IMU_DATA["mag"]=[magX,magY,magZ]
 
       elif self.cmd==MSP_ATTITUDE:
+          #reading the value roll pitch yaw
           self.ATTITUDE["roll"]=self.read16()/10
           self.ATTITUDE["pitch"]=self.read16()/10
           self.ATTITUDE["yaw"]=self.read16()
 
       elif self.cmd==MSP_ALTITUDE:
+          #reading the values of altitude 
           self.ALTITUDE=(self.read32()/10)-0
 
       elif self.cmd==MSP_ANALOG:
+          #reading the analog values like battery and rssi
           self.ANALOG["battery"]=self.read8()/10.0
           self.ANALOG["rssi"]=self.read16()
           
