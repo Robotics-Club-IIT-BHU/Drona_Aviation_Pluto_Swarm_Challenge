@@ -13,6 +13,7 @@ MSP_ALTITUDE=109
 MSP_ANALOG=110
 
 class Drone:
+    #setting up the initial condition of the drone i.e. the initial condition of roll pitch yaw and initial socket parameters i.e. the host and port and other parameters
     def __init__(self,host,port,timeout):
         self.HOST=host
         self.PORT=port
@@ -30,6 +31,7 @@ class Drone:
         self.start_threads()
         self.cmd=Data()
     
+    #starting the server for communication through socket
     def start_server(self):
         count=3
         while(count):
@@ -51,10 +53,12 @@ class Drone:
                 print("Failed with error: %s" %(e))
         if not count: exit(0)
 
+    #reader thread function
     def reader(self):
         while self.runThreads:
             self.Reader.read_frame()
 
+    #writer thread function
     def writer(self):
         print("Writer thread started...")
         request=[MSP_RC,MSP_ATTITUDE,MSP_RAW_IMU,MSP_ALTITUDE,MSP_ANALOG]
@@ -65,12 +69,14 @@ class Drone:
                 if acquired:
                     droneRC=self.userRC
 
+                    #autopilot condition
                     if self.isAutoPilotOn and droneRC[7]==1500:
                         droneRC[0] += self.userRCAP[0] - 1500
                         droneRC[1] += self.userRCAP[1] - 1500
                         droneRC[2] += self.userRCAP[2] - 1500
                         droneRC[3] += self.userRCAP[3] - 1500
                                          
+                    #calling the sendRequestMSP_SET_RAW_RC function in the helpers folder
                     self.Writer.sendRequestMSP_SET_RAW_RC(droneRC)
                     self.Writer.sendRequestMSP_GET_DEBUG(request)
 
@@ -82,12 +88,14 @@ class Drone:
                         self.commandType = 0
                     
                     self.lock.release()
+            #error in socket maybe disconnected or unstable
             except socket.error as e:
                 self.socketStable=False
                 print("Cannot write to thread: %s" %(e))
             time.sleep(0.022)
         
     
+    #sending the command
     def sendCommand(self,data):
         self.userRC[0] = data.rcRoll
         self.userRC[1] = data.rcPitch
@@ -100,6 +108,7 @@ class Drone:
         self.isAutoPilotOn = data.isAutoPilotOn
         self.commandType = data.commandType
     
+    #publishing the roll pitch yaw values 
     def command_preprocess(self,arr):
         self.cmd.rcRoll=arr[0]
         self.cmd.rcPitch=arr[1]
@@ -107,6 +116,7 @@ class Drone:
         self.cmd.rcYaw=arr[3]
         return self.cmd
     
+    #starting the reader and writer threads
     def start_threads(self):
         self.lock=threading.Lock()
         self.t1 = threading.Thread(target=self.writer)
@@ -114,6 +124,7 @@ class Drone:
         self.t1.start()
         self.t2.start()
     
+    #arming the drone
     def arm(self):
         self.reset()
         self.cmd.rcRoll=1500
@@ -125,6 +136,7 @@ class Drone:
         self.sendCommand(self.cmd)
         time.sleep(1)
 
+    #this function is called while taking off
     def box_arm(self):
         self.cmd.rcRoll=1500
         self.cmd.rcYaw=1500
@@ -135,18 +147,22 @@ class Drone:
         self.sendCommand(self.cmd)
         time.sleep(0.5)
 
+    ##disarming the drone
     def disarm(self):
         self.cmd.rcThrottle =1500
         self.cmd.rcAUX4 = 1000
         self.sendCommand(self.cmd)
         time.sleep(0.5)
 
+    #increasing the throttle to increase the height 
     def increase_height(self):
         self.cmd.rcThrottle = 2000
 
+    #decreasing the throttle to decrease the height
     def decrease_height(self):
         self.cmd.rcThrottle =1300
 
+    #the take off function
     def take_off(self):
         self.reset()
         self.disarm()
@@ -157,9 +173,11 @@ class Drone:
         #     self.increase_height()
         # self.reset()
 
+    #landing the drone 
     def land(self):
         self.decrease_height()
     
+    #bringing the drone to its default state
     def reset(self):
         self.cmd.rcRoll =1500
         self.cmd.rcThrottle =1500
@@ -167,6 +185,7 @@ class Drone:
         self.cmd.rcYaw = 1500
         self.cmd.commandType = 0
     
+    #getting the values of the roll pitch and yaw i.e. the current status of the drone
     def getState(self):
         return [
             self.Reader.ATTITUDE["roll"],
@@ -174,9 +193,11 @@ class Drone:
             self.Reader.ATTITUDE["yaw"],
         ]
     
+    #checking if the threads and socket are alright
     def ok(self):
         return self.runThreads and self.socketStable
     
+    #closing everything 
     def __del__(self):
         self.land()
         self.disarm()
