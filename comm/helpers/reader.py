@@ -83,6 +83,7 @@ def read32():
 
 class Reader:
     def __init__(self,socket):
+        #initialising the parameters of MSP packets
         self.socket=socket
         self.inputBuffer=bytearray(1024)
         self.bufferIndex=0
@@ -94,6 +95,7 @@ class Reader:
         self.cmd = 0
 
         """Global variables of data"""
+        #initialising the parameters of Drone
         self.IMU_DATA={"acc":0,"gyro":0,"mag":0}
         self.ATTITUDE={"roll":0,"pitch":0,"yaw":0}
         self.ALTITUDE=0
@@ -120,6 +122,8 @@ class Reader:
         message=self.readnbyte()
         c=np.uint8(message[0])
         #the message in the byte form is compared to the MSP packet message
+        #here each if statement is one step ahead of the last statement and as the packet recieved keeps on matching 
+        #with the actual construct of the MSP packets then one state is updated
         if (self.c_state == IDLE):
           self.c_state =  HEADER_START if (c == np.uint8(bytearray(('$').encode("utf-8"))[0])) else IDLE #36
         elif (self.c_state == HEADER_START):
@@ -152,10 +156,12 @@ class Reader:
             if not self.err_rcvd:
               self.bufferIndex=0
               self.evaluateCommand()
+          #then atlast we redefine the state as IDLE for the next MSP packet
           self.c_state = IDLE
     
 
     ##function to read the input values of the corresponding MSP packet
+    #this is the evaluation of command 
     def evaluateCommand(self):
       if self.cmd==MSP_FC_VERSION:
           self.FC_versionMajor=self.read8()
@@ -183,14 +189,17 @@ class Reader:
           magZ=self.read16()/3
           self.IMU_DATA["mag"]=[magX,magY,magZ]
 
+      #reading the value of roll pitch and yaw
       elif self.cmd==MSP_ATTITUDE:
           self.ATTITUDE["roll"]=self.read16()/10
           self.ATTITUDE["pitch"]=self.read16()/10
           self.ATTITUDE["yaw"]=self.read16()
 
+      #reading the value of the altitude 
       elif self.cmd==MSP_ALTITUDE:
           self.ALTITUDE=(self.read32()/10)-0
 
+      #reading the analog values i.e battery and rssi
       elif self.cmd==MSP_ANALOG:
           self.ANALOG["battery"]=self.read8()/10.0
           self.ANALOG["rssi"]=self.read16()
