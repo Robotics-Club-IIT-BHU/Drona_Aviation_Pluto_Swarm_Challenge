@@ -12,9 +12,13 @@ class Writer:
     #function for package creation for a given payload
     def createPacketMSP(self,msp,payload):
         bf=[]
+        
+        ##traversing packet header one bit at a time and appending alongwith the payload size into the buffer array
         for k in self.MSP_HEADER:
             bf.append(k)
         check_sum=0
+        
+        ##transforming payload size to a 32bit form
         if len(payload)==0:
             pl_size=0& 0xFF
         else:
@@ -51,6 +55,7 @@ class Writer:
             index+=1
         self.sendRequestMSP(self.createPacketMSP(self.MSP_SET_RAW_RC,rc_signals))
 
+         
     def sendRequestMSP(self,data):
         arr=bytearray()
         for d in data:
@@ -64,6 +69,7 @@ class Writer:
     def sendRequestMSP_ACC_TRIM(self):
         self.sendRequestMSP(self.createPacketMSP(self.MSP_ACC_TRIM, []))
 
+         #sending request for packet creation
     def sendRequestMSP_GET_DEBUG(self,requests):
         for k in requests:
             self.sendRequestMSP(self.createPacketMSP(k, []))
