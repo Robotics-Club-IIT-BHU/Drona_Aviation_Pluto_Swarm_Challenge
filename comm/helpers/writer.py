@@ -1,6 +1,7 @@
 import numpy as np
 
 class Writer:
+    #start of the creation of the basic structure of MSP packets
     def __init__(self,socket):
         self.socket=socket
         self.MSP_HEADER="$M<"
@@ -11,6 +12,7 @@ class Writer:
     
     #function for package creation for a given payload
     def createPacketMSP(self,msp,payload):
+        #bf if the list that keeps on storing the packet
         bf=[]
         
         ##traversing packet header one bit at a time and appending alongwith the payload size into the buffer array
