@@ -9,11 +9,11 @@ import numpy as np
 
 def main():
 	drone = Drone(
-			"192.168.0.100",
+			"192.168.4.1",
 			23,
 			1
 			)
-	lidar = Lidar("192.168.0.125",8888,1,plotter=False,reference_line=100)
+	lidar = Lidar("192.168.4.125",8888,1,plotter=True,reference_line=100)
 
 	# drone.prepare()
 	drone.arm()

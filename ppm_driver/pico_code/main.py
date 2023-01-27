@@ -10,10 +10,10 @@ led = Pin('LED', Pin.OUT) # to turn on the builtin LED
 
 """ -------- SETUP WIFI -------- """
 
-#ssid = 'Pluto_2022_3370'
-#password = 'pluto5392'
-ssid = 'InfinixHot10'
-password = 'Connect12345'
+ssid = 'Pluto_2022_3370'
+password = 'pluto5392'
+#ssid = 'InfinixHot10'
+#password = 'Connect12345'
 
 "Connection to WiFi"
 wlan = network.WLAN(network.STA_IF)
@@ -136,6 +136,8 @@ def getLidarData(UART0):
             i2c 16x2 LCD, i2c SSD1306 OLED, 7-segment TM1637, Dot Matrix MAX7219 
             """
             print("D: {} cm S: {} T: {} *C\n".format(distance,strength,temperature))
+            return distance
+    return None
 
 try:
     print("getting version")
@@ -154,7 +156,7 @@ try:
     10Hz-30Hz 	best for super critical range sensing
 
     """
-    set_samp_rate(20) # min: 1 - max: 30 
+    set_samp_rate(30) # min: 1 - max: 30 
     print("\nStart measuring")
         
 except KeyboardInterrupt:
@@ -167,34 +169,36 @@ except KeyboardInterrupt:
 """ -------- SETUP SOCKET -------- """
 
 # next create a socket object
-s = socket.socket()        
+s = socket.socket()
 print ("Socket successfully created")
- 
+
 # reserve a port on your computer
-port = 8888               
- 
+port = 8888
+
 # Next bind to the port
-s.bind(('', port))        
+s.bind(('', port))
 print ("socket binded to %s" %(port))
- 
+
 # put the socket into listening mode
-s.listen(5)    
+s.listen(5)
 print ("socket is listening")
 
+curr_distance=0
 while True:
     # Establish connection with client.
     conn, addr = s.accept()
     print("Connecting to socket..")
     while True:
         try:
-            message=str(getLidarData(lidar))
-            message.encode()
-            conn.send(message)
+            data = getLidarData(lidar)
+            if data is not None: curr_distance=data
+            conn.send(curr_distance.to_bytes(2, 'big'))
         except:
             break
-    time.sleep(1)
+    time.sleep(0.5)
         
 s.close()
+
 
 
 
