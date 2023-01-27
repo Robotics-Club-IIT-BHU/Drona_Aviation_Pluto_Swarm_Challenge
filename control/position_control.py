@@ -51,7 +51,7 @@ class cartesian_cnt:
 
         '''
         Parameters
-            cur_pos : A numpy array consisting current position of drone
+            cur_pos : A numpy array consisting current position X,Y,Z of drone
             cur_rpy : A numpy array consisting current Roll,Pitch,Yaw of drone
             target_pos : A numpy array consisting requried position of drone
         Returns required thrust,target roll,pitch,yaw of drone and position error
@@ -84,7 +84,7 @@ class cartesian_cnt:
 
         '''
         Parameters
-            cur_pos : A numpy array consisting current position of drone
+            cur_pos : A numpy array consisting current position X,Y,Z of drone
             cur_rpy : A numpy array consisting current Roll,Pitch,Yaw of drone
             target_pos : A numpy array consisting requried position of drone
         Returns required thrust and target roll,pitch,yaw of drone
