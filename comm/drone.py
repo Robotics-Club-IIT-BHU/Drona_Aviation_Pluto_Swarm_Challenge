@@ -148,14 +148,14 @@ class Drone:
         self.cmd.rcThrottle =1300
 
     def take_off(self):
-        # self.reset()
-        # self.disarm()
-        # self.box_arm()
-        # self.cmd.commandType = 1
-        # self.sendCommand(self.cmd)
-        for i in range(6500000):
-            self.increase_height()
         self.reset()
+        self.disarm()
+        self.box_arm()
+        self.cmd.commandType = 1
+        self.sendCommand(self.cmd)
+        # for i in range(6500000):
+        #     self.increase_height()
+        # self.reset()
 
     def land(self):
         self.decrease_height()
