@@ -8,6 +8,8 @@ class Regression:
 		self.lin1 = lin1
 		self.poly = poly
 		self.lin2 = lin2
+		
+	#Error correction for marker's estimated coordinates 
 	def simple_regression(self, tvec):
 		m = np.array([0.8928, 0.92259, 0]
 		_tvec = tvec.flatten()
