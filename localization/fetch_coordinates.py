@@ -15,6 +15,8 @@ class poseEstimation:
         self.aruco_dict = cv.aruco.Dictionary_get(cv.aruco.DICT_4X4_50)
         self.aruco_parameters = aruco.DetectorParameters_create()
         self.height = height
+        
+    #Returns marker's real world coordinates
     def fetch(self):
         gray = cv.cvtColor(self.frame, cv.COLOR_BGR2GRAY)
         corners, ids, rejected_img_points = aruco.detectMarkers(gray,
