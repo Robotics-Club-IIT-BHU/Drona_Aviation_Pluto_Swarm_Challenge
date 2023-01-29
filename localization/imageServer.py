@@ -6,6 +6,8 @@ import time
 class ImageServer:
     def __init__(self, source, sleep_rate, frame_rate):
         self.cap = source
+        self.cap.set(3, 3840)
+        self.cap.set(4, 2160)
         self.lock = threading.Lock()
         self.running = False
         self.grabbed = False
