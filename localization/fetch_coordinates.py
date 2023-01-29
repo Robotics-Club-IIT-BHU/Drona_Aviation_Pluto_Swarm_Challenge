@@ -1,77 +1,31 @@
+import cv2 as cv
 import numpy as np
-import cv2
-import cv2.aruco as aruco
-import os
-
-dir = os.path.dirname(__file__)
-
+from transformation import Transformation
+from regression import Regression
 
 class poseEstimation:
-    def __init__(self, frame):
+    def __init__(self, frame, height):
         self.frame = frame
-        self.cam_matrix = np.load(dir + "/camera_matrix_3.npy")
-        self.distortion_coefficients = np.load(dir + "/distortion_coefficients_3.npy")
-        self.aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+        self.cam_mtx = np.load('mtx/cam_matrix.npy')
+        self.dist_mtx = np.load('mtx/dist_mtx.npy')
+        self.o_rvec = np.load('mtx/o_rvec.npy')
+        self.o_tvec = np.load('mtx/o_tvec.npy')
+        self.tf = Transformation()
+        self.rg = Regression()
+        self.aruco_dict = cv.aruco.Dictionary_get(cv.aruco.DICT_4X4_50)
         self.aruco_parameters = aruco.DetectorParameters_create()
-
-    def fetch(self, height, frame):
-        self.frame = frame
-        gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, rejected_img_points = aruco.detectMarkers(
-            gray, self.aruco_dict, parameters=self.aruco_parameters
-        )
-        img = aruco.drawDetectedMarkers(self.frame, corners, borderColor=(0, 0, 255))
-        cv2.imshow("img", img)
-        cv2.waitKey(100)
-
-        if len(corners) > 0:
-            rvec, tvec, markerPoints = aruco.estimatePoseSingleMarkers(
-                corners[0], 0.045, self.cam_matrix, self.distortion_coefficients
-            )
-            rvec = np.reshape(rvec, (3, 1))
-            tvec = np.reshape(tvec, (3, 1))
-            rotmat, _ = cv2.Rodrigues(rvec)
-
-            """
-            print(rotmat.shape)
-            print(tvec.shape)
-            imgx = (corners[0][0][0][0] + corners[0][0][1][0] + corners[0][0][2][0] + corners[0][0][3][0])/4
-            imgy = (corners[0][0][0][1] + corners[0][0][1][1] + corners[0][0][2][1] + corners[0][0][3][1])/4
-            # print(imgx, imgy)
-            imgCoordsVec = np.array([imgx,
-                                     imgy,
-                                     1])
-            imgCoordsVec = np.reshape(imgCoordsVec, (3, 1))
-            # print(imgCoordsVec.shape)
-            camCoordsVec = np.dot(np.linalg.inv(self.cam_matrix), imgCoordsVec)
-            # print(camCoordsVec.shape)
-            camCoordsVec = camCoordsVec * ((280-height)/100)
-            # print(camCoordsVec.shape)
-            camCoordsVec = camCoordsVec - tvec
-            # print(camCoordsVec.shape)
-            # print(rotmat.shape)
-            worldCoordsVec = np.dot(np.linalg.inv(rotmat), camCoordsVec)
-
-            return worldCoordsVec
-            """
-            # print('rot', rotmat)
-            print("tvec", tvec)
-            # print('rvec', rvec)
-            tf_m2c = np.copy(rotmat)
-            tf_m2c = np.hstack((tf_m2c, tvec))
-            tf_m2c = np.vstack(
-                (tf_m2c, [0, 0, 0, 1])
-            )  # transformation matrix: camera with respect to marker
-
-            tf_c2m = np.transpose(rotmat)
-
-            ts = -np.transpose(rotmat)
-            ts = np.matmul(ts, tvec)  # coordinates of marker with respect to the camera
-
-            tf_c2m = np.hstack((tf_c2m, ts))
-
-            tf_c2m = np.vstack(
-                (tf_c2m, [0, 0, 0, 1])
-            )  # transformation matrix: marker with respect to camera
-
-            return ts
+        self.height = height
+    def fetch(self):
+        gray = cv.cvtColor(self.frame, cv.COLOR_BGR2GRAY)
+        corners, ids, rejected_img_points = aruco.detectMarkers(gray,
+                                                                self.aruco_dict,
+                                                                parameters=self.aruco_parameters,
+                                                                cameraMatrix=self.cam_mtx,
+                                                                distCoeff=self.dist_mtx)
+        try:
+            rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[0], 0.045, self.cam_mtx, self.dist_mtx)
+            p_rvec, p_tvec = self.tf.relativePosition(rvec, tvec, self.o_rvec, self.o_tvec)
+            p_tvec = self.rg.simple_regression(p_tvec)
+            return p_tvec
+        except:
+            pass
