@@ -42,6 +42,7 @@ class poseEstimation:
                 + corners[0][0][3][1]
             ) / 4
             # realsense_height = self.cam_height - depth_frame[imgy, imgx]/10 (in cm)
+            # realsense_height = realsense_height/100  (in m)
             rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(
                 corners[0], 0.045, self.cam_mtx, self.dist_mtx
             )
