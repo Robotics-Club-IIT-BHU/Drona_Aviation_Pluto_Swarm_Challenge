@@ -1,6 +1,7 @@
 from localization import poseEstimation, ImageServer
 from control import altitude_cnt, cartesian_cnt, rpy_cnt
 from comm import Drone
+from trajectory import Trajectory
 
 # from utils import sleepTimer
 # from trajectory import BasicTrajectoryServer as trajectoryServer # Add task specific trajectory servers
@@ -12,7 +13,7 @@ import numpy as np
 def main():
     drone = Drone("192.168.4.1", 23, 1)
     lidar = Lidar("192.168.4.125", 8888, 1, plotter=True, reference_line=100)
-
+    trajectory = Trajectory(endpoints=[[0, 0], [2, 2]], accuracy=0.1, stepsize=0.1)
     # drone.prepare()
     drone.arm()
     print("Armed")
@@ -42,6 +43,7 @@ def main():
         # 	print("Image Not Found")
         # print(height)
         drone_info = drone.getState()
+        destination = trajectory.getDestination(current_point=[1, 2])
         # desired_states = trajectory_server.fetch_next_goal(coordinates, drone_info)
         command = []
         # for controller in controllers:

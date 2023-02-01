@@ -119,7 +119,7 @@ class Lidar:
 
 """ Code to test the lidar """
 if __name__ == "__main__":
-    lidar = Lidar("192.168.4.125", 8888, 1, plotter=True, reference_line=50)
+    lidar = Lidar("192.168.248.125", 8888, 1, plotter=True, reference_line=50)
     while True:
         print(lidar.Distance)
         lidar.show_plotter()

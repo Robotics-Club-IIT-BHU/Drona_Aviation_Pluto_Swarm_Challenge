@@ -31,6 +31,7 @@ drone_emoji = """
    DRONE IS READY FOR FLIGHT
 """
 
+
 class Drone:
     # Setting up the initial condition of the drone i.e. the initial condition of roll pitch yaw
     # Initial socket parameters i.e. the host and port and other parameters
@@ -93,7 +94,7 @@ class Drone:
                 acquired = self.lock.acquire(blocking=False)
                 if acquired:
                     droneRC = self.userRC
-
+                    # print(droneRC)
                     # autopilot condition
                     if self.isAutoPilotOn and droneRC[7] == 1500:
                         droneRC[0] += self.userRCAP[0] - 1500
