@@ -1,9 +1,10 @@
+import os
 import cv2 as cv
 import numpy as np
-from transformation import Transformation
-from regression import Regression
+from .transformation import Transformation
+from .regression import Regression
 
-
+dir = os. getcwd()
 class poseEstimation:
     def __init__(self, frame, height):
         self.frame = frame
