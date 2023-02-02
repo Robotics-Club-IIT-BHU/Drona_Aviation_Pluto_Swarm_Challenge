@@ -29,28 +29,16 @@ class poseEstimation:
             distCoeff=self.dist_mtx,
         )
         try:
-            imgx = (
-                corners[0][0][0][0]
-                + corners[0][0][1][0]
-                + corners[0][0][2][0]
-                + corners[0][0][3][0]
-            ) / 4
-            imgy = (
-                corners[0][0][0][1]
-                + corners[0][0][1][1]
-                + corners[0][0][2][1]
-                + corners[0][0][3][1]
-            ) / 4
-            # realsense_height = self.cam_height - depth_frame[imgy, imgx]/10 (in cm)
-            # realsense_height = realsense_height/100  (in m)
-            rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(
-                corners[0], 0.045, self.cam_mtx, self.dist_mtx
-            )
-            p_rvec, p_tvec = self.tf.relativePosition(
-                rvec, tvec, self.o_rvec, self.o_tvec
-            )
-            p_tvec = self.rg.simple_regression(p_tvec)
-            return p_tvec
-            # return p_tvec, realsense_height
+            rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[0], 0.045, cam_mtx, dist_mtx)
+            frame = cv.drawFrameAxes(frame, cam_mtx, dist_mtx, rvec, tvec, 0.1)
+            p_rvec, p_tvec = tf.relativePosition(rvec, tvec, o_rvec, o_tvec)
+            p_tvec = p_tvec.flatten()
+            (topLeft, topRight, bottomRight, bottomLeft) = corners[0].reshape((4, 2))
+            corner = np.array([topLeft, topRight, bottomRight, bottomLeft])
+            corner = corner.flatten()
+            data = np.concatenate((p_tvec, corner), axis=-1)
+            data = np.expand_dims(data, axis=0)
+            pos = rg.linear_regression(data)
+            return pos
         except:
             pass
