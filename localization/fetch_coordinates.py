@@ -14,7 +14,7 @@ class poseEstimation:
         self.tf = Transformation()
         self.rg = Regression()
         self.aruco_dict = cv.aruco.Dictionary_get(cv.aruco.DICT_4X4_50)
-        self.aruco_parameters = aruco.DetectorParameters_create()
+        self.aruco_parameters = cv.aruco.DetectorParameters_create()
 
     # Returns marker's real world coordinates
     def fetch(self, frame):
