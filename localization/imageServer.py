@@ -13,6 +13,8 @@ class ImageServer:
         self.frame_rate = frame_rate
         self.prev = None
         self.vid = cv2.VideoCapture(self.cap)
+        self.vid.set(3, 4096)
+        self.vid.set(4, 2160)
 
     def __refresh(self, flag):
         while self.running:
