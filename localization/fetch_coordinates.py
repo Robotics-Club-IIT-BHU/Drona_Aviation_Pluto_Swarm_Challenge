@@ -20,9 +20,13 @@ class poseEstimation:
     def fetch(self, frame):
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         corners, ids, rejected_img_points = cv.aruco.detectMarkers(gray, self.aruco_dict, parameters=self.aruco_parameters)
+        img = cv.aruco.drawDetectedMarkers(frame, corners, borderColor=(0, 0, 255))
+        img=cv.resize(img, [900,474])
+        cv.imshow("Frame",img)
+        cv.waitKey(10)
         try:
             rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[0], 0.045, self.cam_mtx, self.dist_mtx)
-            p_rvec, p_tvec = self.tf.relativePosition(self.rvec, self.tvec, self.o_rvec, self.o_tvec)
+            p_rvec, p_tvec = self.tf.relativePosition(rvec, tvec, self.o_rvec, self.o_tvec)
             p_tvec = p_tvec.flatten()
             (topLeft, topRight, bottomRight, bottomLeft) = corners[0].reshape((4, 2))
             corner = np.array([topLeft, topRight, bottomRight, bottomLeft])

@@ -95,7 +95,7 @@ class send_data:
 
     # defining the forward function for drone
     def forward(self):
-        self.cmd.rcPitch = 1600
+        self.cmd.rcPitch = 1550
         self.drone.sendCommand(self.cmd)
 
     # defining the backward function for drone
@@ -105,7 +105,7 @@ class send_data:
 
     # defining the left movement
     def left(self):
-        self.cmd.rcRoll = 1400
+        self.cmd.rcRoll = 1450
         self.drone.sendCommand(self.cmd)
 
     # defining the right movement
@@ -126,7 +126,7 @@ class send_data:
     # resetting the drone to its default state
     def reset(self):
         self.cmd.rcRoll = 1500
-        self.cmd.rcThrottle = 1600
+        self.cmd.rcThrottle = 1500
         self.cmd.rcPitch = 1500
         self.cmd.rcYaw = 1500
         self.cmd.commandType = 0
@@ -134,12 +134,12 @@ class send_data:
 
     # increasing the height of the drone by decreasing the throttle
     def increase_height(self):
-        self.cmd.rcThrottle = 2100
+        self.cmd.rcThrottle = 1900
         self.drone.sendCommand(self.cmd)
 
     # decreasing the height of drone by decreasing the throttle
     def decrease_height(self):
-        self.cmd.rcThrottle = 1300
+        self.cmd.rcThrottle = 1400
         self.drone.sendCommand(self.cmd)
 
     # taking off function

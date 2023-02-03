@@ -12,51 +12,51 @@ import numpy as np
 
 def main():
     drone = Drone("192.168.4.1", 23, 1)
-    lidar = Lidar("192.168.4.125", 8888, 1, plotter=True, reference_line=100)
-    trajectory = Trajectory(endpoints=[[0, 0], [2, 2]], accuracy=0.1, stepsize=0.1)
+    # lidar = Lidar("192.168.4.125", 8888, 1, plotter=True, reference_line=100)
+    # trajectory = Trajectory(endpoints=[[0, 0], [2, 2]], accuracy=0.1, stepsize=0.1)
     # drone.prepare()
-    drone.arm()
+    # drone.arm()
     print("Armed")
-    drone.take_off()
+    # drone.take_off()
     print("Takeoff initiated")
     # trajectory_server = trajectoryServer(r, n) ## Define shape using polygon
 
-    # img_server = ImageServer(source = 2, sleep_rate = 1, frame_rate = 30)
-    # img_server.connect()
-    height = lidar.Distance
-    # coordinates = poseEstimation(img_server.prev)
+    img_server = ImageServer(source = 2, sleep_rate = 1, frame_rate = 30)
+    img_server.connect()
+    # height = lidar.Distance
+    coordinates = poseEstimation()
 
     # drone.getControl().start()
     # sleep_timer = sleepTimer(50) # rate
-    controllers = [
-        altitude_cnt(tracker_mode=False),
+    # controllers = [
+        # altitude_cnt(tracker_mode=False),
         # rpy_cnt()
         # cartesian_cnt()
-    ]
-
-    while drone.ok():
-        height = lidar.Distance
-        # if img_server.grabbed:
-        # 	pose=coordinates.fetch(height,img_server.prev)
-        # 	# print(pose)
-        # else:
-        # 	print("Image Not Found")
+    # ]
+    print("Starting image server....")
+    while True:
+        # height = lidar.Distance
+        if img_server.grabbed:
+            pose=coordinates.fetch(img_server.prev)
+            if pose is not None:
+                print(f"X={int(pose[0]*100)}cm Y={int(pose[1]*100)}cm Z={int(pose[2]*100)}cm")
         # print(height)
-        drone_info = drone.getState()
-        destination = trajectory.getDestination(current_point=[1, 2])
+        # drone_info = drone.getState()
+        # desired_coordinates = trajectory.getDestination(current_point=[1, 2])
         # desired_states = trajectory_server.fetch_next_goal(coordinates, drone_info)
-        command = []
+        # command = []
         # for controller in controllers:
-        command = controllers[0].update([0, 0, height], drone_info, 100)
-        print(height)
+        # command = controllers[0].update([0, 0, height], drone_info, 100)
+        # print(height)
         # command += controllers[0].update(np.array([1500, 1500, 1500]), np.array(drone_info))
         # command=controllers
-        command = drone.command_preprocess(command)
-        drone.sendCommand(command)
+        # command = drone.command_preprocess(command)
+        # drone.sendCommand(command)
         # lidar.show_plotter()
         # if KeyboardInterrupt:
         # 	drone.disarm()
         # sleep_timer.sleep()
+
         time.sleep(0.01)
 
     # final_command = []
