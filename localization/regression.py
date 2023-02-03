@@ -12,6 +12,7 @@ class Regression:
 		self.xy_lin1, self.z_lin1 = xy_lin1, z_lin1
 		self.xy_poly2, self.z_poly2 = xy_poly2, z_poly2
 		self.xy_lin2, self.z_lin2 = xy_lin2, z_lin2
+	#Making training model for position error correction
 	def train_model(self, X, Y):
 		lin1 = LinearRegression()
 		lin1.fit(X, Y)
@@ -21,18 +22,20 @@ class Regression:
 		lin2 = LinearRegression()
 		lin2.fit(poly2_out, Y)
 		return lin1, poly2, lin2
+	#Using Linear regression to predict corrected position
 	def linear_regression(self, data):
 		xy = self.xy_lin1.predict(data)[0]
 		z = self.z_lin1.predict(data)[0]
 		pos = np.concatenate((xy,z), axis=-1).flatten()
 		return pos
 		return np.concatenate((xy, z), axis=-1)
+	#Using Polynomial regression to predict corrected position
 	def polynomial_regression(self, data):
 		xy = self.xy_lin2.predict(self.xy_poly2.fit_transform(data))
 		z = self.z_lin2.predict(self.z_poly2.fit_transform(data))
 		pos = np.concatenate((xy,z), axis=-1).flatten()
 		return pos
-
+#Loading dataset
 xy_dataset = pd.read_csv(dir+"/localization/dataset/xy_dataset.csv")
 xy_X = xy_dataset.iloc[:, :-2].values
 xy_Y = xy_dataset.iloc[:, -2:].values
