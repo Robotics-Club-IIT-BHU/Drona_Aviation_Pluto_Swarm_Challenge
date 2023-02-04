@@ -95,32 +95,32 @@ class send_data:
 
     # defining the forward function for drone
     def forward(self):
-        self.cmd.rcPitch = 1550
+        self.cmd.rcPitch = 1580
         self.drone.sendCommand(self.cmd)
 
     # defining the backward function for drone
     def backward(self):
-        self.cmd.rcPitch = 1400
+        self.cmd.rcPitch = 1410
         self.drone.sendCommand(self.cmd)
 
     # defining the left movement
     def left(self):
-        self.cmd.rcRoll = 1450
+        self.cmd.rcRoll = 1410
         self.drone.sendCommand(self.cmd)
 
     # defining the right movement
     def right(self):
-        self.cmd.rcRoll = 1600
+        self.cmd.rcRoll = 1570
         self.drone.sendCommand(self.cmd)
 
     # decreasing the yaw value of drone
     def left_yaw(self):
-        self.cmd.rcYaw = 1200
+        self.cmd.rcYaw = 1300
         self.drone.sendCommand(self.cmd)
 
     # increasing the yaw value of drone
     def right_yaw(self):
-        self.cmd.rcYaw = 1800
+        self.cmd.rcYaw = 1700
         self.drone.sendCommand(self.cmd)
 
     # resetting the drone to its default state

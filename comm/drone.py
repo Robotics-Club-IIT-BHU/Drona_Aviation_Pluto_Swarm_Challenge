@@ -198,9 +198,6 @@ class Drone:
         self.box_arm()
         self.cmd.commandType = 1
         self.sendCommand(self.cmd)
-        # for i in range(6500000):
-        #     self.increase_height()
-        # self.reset()
 
     # Landing the drone
     def land(self):
@@ -217,9 +214,9 @@ class Drone:
     # Getting the values of the roll pitch and yaw i.e. the current status of the drone
     def getState(self):
         return [
-            self.Reader.ATTITUDE["roll"],
-            self.Reader.ATTITUDE["pitch"],
-            self.Reader.ATTITUDE["yaw"],
+            6.2831*self.Reader.ATTITUDE["roll"]/6555.0,
+            6.2831*self.Reader.ATTITUDE["pitch"]/6555.0,
+            6.2831*self.Reader.ATTITUDE["yaw"]/360.0,
         ]
 
     # Checking if the threads and socket are alright
@@ -229,10 +226,14 @@ class Drone:
     # Function to land drone and disarm it
     # Then closing all threads and sockets after class instance is deleted
     def __del__(self):
-        self.land()
+        # self.land()
+        # time.sleep(2)
         self.disarm()
+        time.sleep(0.2)
         self.runThreads = False
         time.sleep(0.5)
         self.SOCKET.close()
         time.sleep(0.5)
         print("Drone Connection Ended!!!")
+
+    

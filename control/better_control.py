@@ -13,7 +13,7 @@ class altitude_cnt:
                 Set true to adjust PID Coefficients using trackbars
         """
         # Initialize PID controller coefficients
-        self.kp = 4.0
+        self.kp = 0.0
         self.kd = 0.0
         self.ki = 0.0
         self.imax = 400.0
@@ -97,12 +97,12 @@ class altitude_cnt:
             I = self.integrator
             output += I
 
-        output += 1700
+        output += 1500
         # Crop output
-        if output < 1300:
-            output = 1300
-        if output > 2100:
-            output = 2100
+        if output < 1400:
+            output = 1400
+        if output > 2000:
+            output = 2000
         if self.tracker_mode:
             cv2.waitKey(1)
         print("Throttle=", output)
@@ -121,7 +121,7 @@ class altitude_cnt:
     # Trackbar window to tune PID coefficients
     def tracker_window(self):
         cv2.namedWindow("controls")
-        cv2.createTrackbar("p", "controls", 170, 500, self.update_p)
+        cv2.createTrackbar("p", "controls", 0, 500, self.update_p)
         cv2.createTrackbar("i", "controls", 0, 250, self.update_i)
         cv2.createTrackbar("d", "controls", 0, 250, self.update_d)
 
