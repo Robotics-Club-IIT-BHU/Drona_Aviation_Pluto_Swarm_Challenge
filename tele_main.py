@@ -1,7 +1,7 @@
 from localization import poseEstimation, ImageServer
 from control import altitude_cnt, main_controller, my_controller
 from comm import Drone
-from trajectory import Slot
+from trajectory import Trajectory
 
 # from utils import sleepTimer
 # from trajectory import BasicTrajectoryServer as trajectoryServer # Add task specific trajectory servers
@@ -61,8 +61,7 @@ def main():
     lp_pose = [0.0, 0.0, 0.0]
     command = [0, 0, 0, 0]
     target_rpy = [0, 0, 0]
-    thrust = 1550
-    slot = Slot()
+    thrust = 1500
     while drone.ok():
         # #print(drone.getState())
 
@@ -85,7 +84,7 @@ def main():
                 )
                 # #print(f"Command {command}")
                 # #print(command)
-                if False:
+                if pose is not None:
                     lp_pose = pose
                     lp_pose[2] = max(0.0, pose[2])
                     # print(f"X={int(lp_pose[0]*100)}cm Y={int(lp_pose[1]*100)}cm Z={int(lp_pose[2]*100)}cm")
@@ -94,7 +93,7 @@ def main():
                         np.array(lp_pose), np.array(drone_info), target_pos[2]
                     )
                     command[2] = command1[2]
-                    # thrust = command[2]
+                    thrust = command[2]
                 #     #print("Detected command ",command)
 
                 #     # command=command1
@@ -111,35 +110,34 @@ def main():
                 # #print(height)
                 # command = controllers[0].update(np.array([1500, 1500, 1500]), np.array(drone_info))
                 # command=controller
-                # key = getKey()  #
+                key = getKey()  #
                 # key = "jhbhjbjh"  #
                 # print("key=",key)
                 # print(key)
-                # if key == "\x03":
-                #     break
-                # elif key=="[A":
-                #     command[1]+=100
-                # elif key=="[B":
-                #     command[1]-=100
-                #     # target_rpy[1]=initial_rpy[1]-0.2
-                # elif key=="[D":
-                #     command[0]-=100
-                #     # target_rpy[0]=initial_rpy[0]-2
-                # elif key=="[C":
-                #     command[0]+=100
-                #     # target_rpy[0]=initial_rpy[0]+6.28
-                # elif key=="w":
-                #     thrust=min(thrust+50,2000)
-                # elif key=="s":
-                #     thrust=max(thrust-50,1300)
-                # else:
-                #     thrust=1500
+                if key == "\x03":
+                    break
+                elif key == "[A":
+                    command[1] += 100
+                elif key == "[B":
+                    command[1] -= 100
+                    # target_rpy[1]=initial_rpy[1]-0.2
+                elif key == "[D":
+                    command[0] -= 100
+                    # target_rpy[0]=initial_rpy[0]-2
+                elif key == "[C":
+                    command[0] += 100
+                    # target_rpy[0]=initial_rpy[0]+6.28
+                elif key == "w":
+                    thrust = min(thrust + 50, 2000)
+                elif key == "s":
+                    thrust = max(thrust - 50, 1300)
+                else:
+                    thrust = 1500
 
                 #     target_rpy=initial_rpy
                 # drone.show_plotter()
                 # sleep_timer.sleep()
-                command = slot.check_command(command)
-                # print(command)
+                print(command)
                 commandp = drone.command_preprocess(command)
                 drone.sendCommand(commandp)
             else:

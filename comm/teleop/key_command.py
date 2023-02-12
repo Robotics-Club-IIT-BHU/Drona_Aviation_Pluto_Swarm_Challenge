@@ -1,5 +1,5 @@
 import sys, select, termios, tty
-from key_handling import send_data
+from .key_handling import send_data
 
 sys.path.insert(0, "../../")
 from comm import Drone

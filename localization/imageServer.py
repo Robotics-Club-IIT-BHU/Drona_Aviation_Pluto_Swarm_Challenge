@@ -13,17 +13,18 @@ class ImageServer:
         self.frame_rate = frame_rate
         self.prev = None
         self.vid = cv2.VideoCapture(self.cap)
-        self.vid.set(3, 4096)
-        self.vid.set(4, 2160)
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.out = cv2.VideoWriter('camera_recording.avi', fourcc, 20.0, (1920, 1080))
+        self.vid.set(3, 640)
+        self.vid.set(4, 480)
+        self.vid.set(cv2.CAP_PROP_EXPOSURE, 10)
+        # fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        # self.out = cv2.VideoWriter('camera_recording.avi', fourcc, 20.0, (1920, 1080))
 
     def __refresh(self, flag):
         while self.running:
             self.lock.acquire()
             try:
                 self.prev = self.capture()
-                self.out.write(self.prev)
+                # self.out.write(self.prev)
                 if not self.grabbed:
                     self.grabbed = True
             finally:

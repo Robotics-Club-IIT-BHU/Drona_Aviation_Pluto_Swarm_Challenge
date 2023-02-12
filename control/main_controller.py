@@ -1,22 +1,25 @@
 # import libraries
 import math
 import numpy as np
+from .xyz_control import cartesian_cnt
 
 
-class cartesian_cnt:
+class main_controller:
     def __init__(self, g: float = 9.8):
         """
         Parameters
             g : float, optional
                 The gravitational acceleration in m/s^2.
         """
-        self.P_COEFF_FOR = np.array([70, 120, 0.0])  # Proportional Coefficient
-        self.I_COEFF_FOR = np.array([100.00, 100.00, 0.0000])  # Integrate Coefficient
-        self.D_COEFF_FOR = np.array([0, 0, 0.0])  # Derivative Coefficient
+        self.P_COEFF_FOR = np.array([100, 100, 0.0])  # Proportional Coefficient
+        self.I_COEFF_FOR = np.array([1000, 1000, 0.0000])  # Integrate Coefficient
+        self.D_COEFF_FOR = np.array([0, 0, 0])  # Derivative Coefficient
         self.MAX_ROLL_PITCH = np.pi / 6  # Maximum Roll/Pitch
         self.GRAVITY = g
         self.control_timestep = 1.0 / 125.0
         self.scale_value = 100
+        self.scale_cart = 0
+        self.pc = cartesian_cnt()
         self.reset()
 
     def reset(self):
@@ -25,6 +28,7 @@ class cartesian_cnt:
         The previous step's and integral errors for both position and attitude are set to zero.
         """
         self.last_pos_e = np.zeros(3)
+        self.last_position_e = np.zeros(3)
         self.integral_pos_e = np.zeros(3)
         self.last_rpy_e = np.zeros(3)
         self.integral_rpy_e = np.zeros(3)
@@ -62,7 +66,7 @@ class cartesian_cnt:
         )
         return np.matmul(np.matmul(yaw_matrix, pitch_matrix), roll_matrix)
 
-    def _simplePIDPositionControl(self, cur_pos, cur_rpy, target_pos):
+    def _simplePIDPositionControl(self, cur_pos, cur_rpy, target_rpy):
 
         """
         Parameters
@@ -72,19 +76,24 @@ class cartesian_cnt:
         Returns required thrust,target roll,pitch,yaw of drone and position error
         """
 
-        pos_e = np.sin(target_pos) - np.sin(cur_rpy)  # Calculating position error
+        pos_e = np.sin(target_rpy) - np.sin(cur_rpy)  # Calculating position error
         # # pos_e=np.cos(pos_e)
         d_pos_e = (pos_e - self.last_pos_e) / self.control_timestep
         self.last_pos_e = pos_e  # Updating previous error
         self.integral_pos_e = (
             self.integral_pos_e + pos_e * self.control_timestep
         )  # Updating integral error
-        target_rpy = (
-            np.array([0, 0, self.GRAVITY])
+        required_rpy = (
+            0.0
             + np.multiply(self.P_COEFF_FOR, pos_e)
             + np.multiply(self.I_COEFF_FOR, self.integral_pos_e)
             + np.multiply(self.D_COEFF_FOR, d_pos_e)
         )  # Calulating Target for0ce using PID controller
+        if abs(pos_e[0]) > 0.08:
+            self.integral_pos_e[0] = 0
+        if abs(pos_e[1]) > 0.08:
+            self.integral_pos_e[1] = 0
+
         print("P:", np.multiply(self.P_COEFF_FOR, pos_e))
         print("D:", np.multiply(self.D_COEFF_FOR, d_pos_e))
         print("I:", np.multiply(self.I_COEFF_FOR, self.integral_pos_e))
@@ -107,9 +116,9 @@ class cartesian_cnt:
         # Using rotation matrix to calculate thrust
         # cur_rotation = np.array(self.getMatrix(cur_rpy)).reshape(3, 3)
         thrust = 0  # np.dot(cur_rotation, target_force)
-        return thrust, target_rpy, pos_e
+        return thrust, required_rpy, pos_e
 
-    def update(self, cur_pos, cur_rpy, target_pos):
+    def update(self, cur_pos, target_pos, cur_rpy, target_rpy):
 
         """
         Parameters
@@ -121,14 +130,36 @@ class cartesian_cnt:
 
         self.control_counter += 1
 
-        thrust, computed_target_rpy, pos_e = self._simplePIDPositionControl(
-            cur_pos, cur_rpy, target_pos
+        # _, computed_target_rpy, pos_e = self._simplePIDPositionControl(
+        #     cur_pos, cur_rpy, target_rpy
+        # )
+        thrust, computed_target_rpy = self.pc.update(
+            cur_pos, cur_rpy, target_pos, target_rpy
         )
+
+        _, computed_target_rpy_2, pos_e = self._simplePIDPositionControl(
+            cur_pos, cur_rpy, target_rpy
+        )
+
+        print(f"delta rpy,{computed_target_rpy_2}")
+        # print('curr_rpy_to_rpy_cnt', cur_rpy)
+        # print(f"Position1,{computed_target_rpy_pc}")
+        print(f"RPY1,{computed_target_rpy}")
         arr = [
-            1485 + computed_target_rpy[0] * self.scale_value,
-            1535 + computed_target_rpy[1] * self.scale_value,
+            1497
+            + (computed_target_rpy[0] * self.scale_cart)
+            + (computed_target_rpy_2[0] * self.scale_value),
+            1502
+            + (computed_target_rpy[1] * self.scale_cart)
+            + (computed_target_rpy_2[1] * self.scale_value),
             1650,
-            1500,  # +computed_target_rpy[2]*self.scale_value,
+            1500
+            + (computed_target_rpy[2] * self.scale_cart)
+            + (
+                computed_target_rpy_2[2] * self.scale_value
+            ),  # +computed_target_rpy[2]*self.scale_value,
         ]
+        for i in range(len(arr)):
+            arr[i] = max(min(arr[i], 2100), 900)
 
         return arr

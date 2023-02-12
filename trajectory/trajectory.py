@@ -1,3 +1,6 @@
+import time
+
+
 class Trajectory:
     def __init__(self, endpoints, steps=30, accuracy=0.1):
         self.endpoints = endpoints  # [Start Next Next ... Next End] in format [x,y,z]
@@ -55,3 +58,30 @@ class Trajectory:
             self.destination[2] = max(self.endpoints[i][2], self.destination[2] - step)
 
         return self.destination
+
+
+class Slot:
+    def __init__(self):
+        self.slot = 0
+        self.slot_timer = time.time()
+        self.slot_array = [5, 1.7, 0.5, 2.3, 0.5, 1.2, 0.5, 2.5, 0]
+
+    def check_command(self, command):
+        # print(self.slot_timer+self.slot_array[self.slot])
+        # print(time.time())
+        if self.slot >= len(self.slot_array):
+            command = [1500, 1500, 900, 1500]
+            return command
+        if (self.slot_timer + self.slot_array[self.slot]) < time.time():
+            self.slot_timer = time.time()
+            self.slot += 1
+            print(f"Next slot {self.slot}")
+        if self.slot == 1:
+            command[1] += 100
+        if self.slot == 3:
+            command[0] += 75
+        if self.slot == 5:
+            command[1] -= 75
+        if self.slot == 7:
+            command[0] -= 100
+        return command
