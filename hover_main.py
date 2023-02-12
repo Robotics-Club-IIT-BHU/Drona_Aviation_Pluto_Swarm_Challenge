@@ -1,7 +1,7 @@
 from localization import poseEstimation, ImageServer
 from control import altitude_cnt, main_controller, my_controller
 from comm import Drone
-from trajectory import Slot
+from trajectory import Trajectory
 
 # from utils import sleepTimer
 # from trajectory import BasicTrajectoryServer as trajectoryServer # Add task specific trajectory servers
@@ -13,7 +13,7 @@ import sys
 import sys, select, termios, tty
 
 drone = Drone("192.168.4.1", 23, 1, plotter=False)
-img_server = ImageServer(source=0, sleep_rate=1, frame_rate=60)
+img_server = ImageServer(source=1, sleep_rate=1, frame_rate=60)
 settings = termios.tcgetattr(sys.stdin)
 
 
@@ -48,7 +48,7 @@ def main():
     # print("Armed")
     drone.take_off()
     # print("Takeoff initiated")
-    coordinates = poseEstimation(plotter=False, reference_line=[100, 100, 100])
+    coordinates = poseEstimation(plotter=True, reference_line=[100, 100, 100])
 
     # drone.getControl().start()
     # sleep_timer = sleepTimer(50) # rate
@@ -62,7 +62,6 @@ def main():
     command = [0, 0, 0, 0]
     target_rpy = [0, 0, 0]
     thrust = 1550
-    slot = Slot()
     while drone.ok():
         # #print(drone.getState())
 
@@ -85,7 +84,7 @@ def main():
                 )
                 # #print(f"Command {command}")
                 # #print(command)
-                if False:
+                if pose is not None:
                     lp_pose = pose
                     lp_pose[2] = max(0.0, pose[2])
                     # print(f"X={int(lp_pose[0]*100)}cm Y={int(lp_pose[1]*100)}cm Z={int(lp_pose[2]*100)}cm")
@@ -94,12 +93,12 @@ def main():
                         np.array(lp_pose), np.array(drone_info), target_pos[2]
                     )
                     command[2] = command1[2]
-                    # thrust = command[2]
+                    thrust = command[2]
                 #     #print("Detected command ",command)
 
                 #     # command=command1
                 else:
-                    # thrust = max(thrust-2, 1550)
+                    thrust = max(thrust - 2, 1550)
                     #     # command[0] = 1485
                     #     # command[1] = 1535
                     #     # command[0] = 1500
@@ -107,41 +106,26 @@ def main():
                     command[2] = thrust
                     command[3] = 1500
                 #     # time.sleep(0.0022)
-                # coordinates.show_plotter()
+                coordinates.show_plotter()
                 # #print(height)
                 # command = controllers[0].update(np.array([1500, 1500, 1500]), np.array(drone_info))
                 # command=controller
+                commandp = drone.command_preprocess(command)
+                drone.sendCommand(commandp)
                 # key = getKey()  #
-                # key = "jhbhjbjh"  #
-                # print("key=",key)
-                # print(key)
-                # if key == "\x03":
-                #     break
-                # elif key=="[A":
-                #     command[1]+=100
+                # #print("key=",key)
+                # if key=="[A":
+                #     target_rpy[1]=initial_rpy[1]+0.5
                 # elif key=="[B":
-                #     command[1]-=100
-                #     # target_rpy[1]=initial_rpy[1]-0.2
+                #     target_rpy[1]=initial_rpy[1]-0.5
                 # elif key=="[D":
-                #     command[0]-=100
-                #     # target_rpy[0]=initial_rpy[0]-2
+                #     target_rpy[0]=initial_rpy[0]-0.5
                 # elif key=="[C":
-                #     command[0]+=100
-                #     # target_rpy[0]=initial_rpy[0]+6.28
-                # elif key=="w":
-                #     thrust=min(thrust+50,2000)
-                # elif key=="s":
-                #     thrust=max(thrust-50,1300)
+                #     target_rpy[0]=initial_rpy[0]+0.5
                 # else:
-                #     thrust=1500
-
                 #     target_rpy=initial_rpy
                 # drone.show_plotter()
                 # sleep_timer.sleep()
-                command = slot.check_command(command)
-                # print(command)
-                commandp = drone.command_preprocess(command)
-                drone.sendCommand(commandp)
             else:
 
                 # #print("Cannot detect aruco")
