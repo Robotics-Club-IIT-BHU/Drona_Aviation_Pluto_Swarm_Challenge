@@ -32,7 +32,6 @@ pip install requirements.txt
 python main.py
 ```
 
-33---
 ## For Keyboard Teleop using Python Wrapper:
 
 1. Move inside teleop folder inside the comm folder
