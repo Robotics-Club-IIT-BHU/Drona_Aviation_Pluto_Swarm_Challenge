@@ -60,3 +60,15 @@ pip install .
 ```
 python follow.py
 ```
+
+Team
+- Aryaman Gupta
+- Ankur Agrawal
+- Sandeepan Ghosh
+- Arjun Krishna
+- Srini Rohan
+- Harsh Mahesheka
+- Sanchit Awasthi
+- Atharv Gaur
+- Divyam Taneja
+- Epsa
