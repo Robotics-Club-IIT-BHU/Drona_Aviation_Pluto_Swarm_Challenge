@@ -14,7 +14,7 @@ Pluto is a lightweight programmable drone created by <a href="https://www.dronaa
 
 1. <b>Clone this repository:</b>
 ```
-git clone https://github.com/interiit/Drona_Aviation_HighPrep.git
+git clone https://github.com/Robotics-Club-IIT-BHU/Drona-Aviation-Inter-IIT-2023.git
 ```
 2. <b>Initial setup:</b> 
   - Install [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)  
@@ -22,7 +22,7 @@ git clone https://github.com/interiit/Drona_Aviation_HighPrep.git
   - Activate virtual environment 
     - linux: `source venv/bin/activate`
     - windows: `./venv/Scripts/activate`
-  - Move inside the main folder `cd Drona_Aviation_HighPrep` 
+  - Move inside the main folder `cd Drona-Aviation-Inter-IIT-2023` 
 3. <b>Install dependencies: </b>
 ```
 pip install requirements.txt
