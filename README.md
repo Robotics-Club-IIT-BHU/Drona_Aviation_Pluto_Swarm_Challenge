@@ -1,4 +1,4 @@
-<h1 align="center"> Drona-Aviation-Inter-IIT-2023 </h1>
+<h1 align="center"> Drona Aviation Pluto Swarm Challenge </h1>
 
 <p align="center">
   <img src="https://astirtech.com/wp-content/uploads/2021/09/product-page-banner-new.png" alt="Loading image..."/>
